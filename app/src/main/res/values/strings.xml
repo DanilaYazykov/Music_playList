@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">Playlist_Maker_2022</string>
+    <string name="app_name">Playlist maker</string>
+    <string name="searching">Поиск</string>
+    <string name="media">Медиатека</string>
+    <string name="settings">Настройки</string>
+    <string name="theme">Темная тема</string>
+    <string name="share_app">Поделиться приложением</string>
+    <string name="teh_support">Написать в поддержку</string>
+    <string name="agreement">Пользовательское соглашение</string>
+    <string name="searchingActivityWords">"Раздел \"Поиск\" в разработке"</string>
+    <string name="mediaActivityWords">"Раздел \"Медиатека\" в разработке"</string>
+
 </resources>

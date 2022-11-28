@@ -8,119 +8,84 @@
     android:orientation="vertical"
     android:paddingTop="14dp">
 
-    <LinearLayout
+    <TextView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:drawablePadding="28dp"
+        android:gravity="top"
+        android:text="@string/settings"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_arrow" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageButton
-            android:layout_width="@dimen/normal_size"
-            android:layout_height="@dimen/normal_size"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="7dp"
-            android:background="@color/white"
-            android:contentDescription="@string/settings"
-            android:src="@drawable/ic_arrow"
-            app:tint="@color/black"
-            tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:gravity="top"
-            android:text="@string/settings"
-            android:textColor="@color/black"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            />
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/normal_size"
         android:layout_marginTop="24dp"
-        android:layout_marginBottom="476dp"
-        android:orientation="vertical"
-        android:textStyle="bold">
+        android:layout_marginEnd="25dp"
+        android:text="@string/theme"
+        android:textAlignment="textStart"
+        android:textColor="@color/black"
+        android:textSize="@dimen/normal_text_size"
+        app:icon="@drawable/ic_switch_control"
+        app:iconGravity="end"
+        app:iconTint="@color/grey"
+        tools:ignore="TextViewEdits,TextContrastCheck" />
 
-        <Button
-            style="@android:style/Widget.Holo.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/normal_size"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="25dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
-            android:inputType="textCapWords"
-            android:text="@string/theme"
-            android:textAlignment="textStart"
-            android:textColor="@color/black"
-            android:textSize="@dimen/normal_text_size"
-            app:icon="@drawable/ic_switch_control"
-            app:iconGravity="end"
-            app:iconTint="@color/grey"
-            tools:ignore="TextViewEdits,TouchTargetSizeCheck" />
+    <Button
+        style="@android:style/Widget.Holo.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/normal_size"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="25dp"
+        android:inputType="textCapWords"
+        android:text="@string/share_app"
+        android:textAlignment="textStart"
+        android:textColor="@color/black"
+        android:textSize="@dimen/normal_text_size"
+        app:icon="@drawable/ic_share_pic"
+        app:iconGravity="end"
+        app:iconTint="@color/grey"
+        tools:ignore="TextViewEdits,TouchTargetSizeCheck" />
 
-        <Button
-            style="@android:style/Widget.Holo.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/normal_size"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="25dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
-            android:inputType="textCapWords"
-            android:text="@string/share_app"
-            android:textAlignment="textStart"
-            android:textColor="@color/black"
-            android:textSize="@dimen/normal_text_size"
-            app:icon="@drawable/ic_share_pic"
-            app:iconGravity="end"
-            app:iconTint="@color/grey"
-            tools:ignore="TextViewEdits,TouchTargetSizeCheck" />
+    <Button
+        style="@android:style/Widget.Holo.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/normal_size"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="25dp"
+        android:inputType="textCapWords"
+        android:text="@string/teh_support"
+        android:textAlignment="textStart"
+        android:textColor="@color/black"
+        android:textSize="@dimen/normal_text_size"
+        app:icon="@drawable/ic_group"
+        app:iconGravity="end"
+        app:iconTint="@color/grey"
+        tools:ignore="TextViewEdits,TouchTargetSizeCheck" />
 
-        <Button
-            style="@android:style/Widget.Holo.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/normal_size"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="25dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
-            android:inputType="textCapWords"
-            android:text="@string/teh_support"
-            android:textAlignment="textStart"
-            android:textColor="@color/black"
-            android:textSize="@dimen/normal_text_size"
-            app:icon="@drawable/ic_group"
-            app:iconGravity="end"
-            app:iconTint="@color/grey"
-            tools:ignore="TextViewEdits,TouchTargetSizeCheck" />
-
-        <Button
-            style="@android:style/Widget.Holo.Button.Borderless"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/normal_size"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="25dp"
-            android:layout_weight="1"
-            android:backgroundTint="@color/white"
-            android:inputType="textCapWords"
-            android:text="@string/agreement"
-            android:textAlignment="textStart"
-            android:textColor="@color/black"
-            android:textSize="@dimen/normal_text_size"
-            app:icon="@drawable/ic_arrow_right"
-            app:iconGravity="end"
-            app:iconTint="@color/grey"
-            tools:ignore="TextViewEdits,TouchTargetSizeCheck" />
-
-    </LinearLayout>
+    <Button
+        style="@android:style/Widget.Holo.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/normal_size"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="25dp"
+        android:inputType="textCapWords"
+        android:text="@string/agreement"
+        android:textAlignment="textStart"
+        android:textColor="@color/black"
+        android:textSize="@dimen/normal_text_size"
+        app:icon="@drawable/ic_arrow_right"
+        app:iconGravity="end"
+        app:iconTint="@color/grey"
+        tools:ignore="TextViewEdits,TouchTargetSizeCheck" />
 
 </LinearLayout>

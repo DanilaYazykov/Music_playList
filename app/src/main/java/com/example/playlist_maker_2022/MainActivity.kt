@@ -3,7 +3,6 @@ package com.example.playlist_maker_2022
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 
 class MainActivity : AppCompatActivity() {
@@ -19,13 +18,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         val buttonMedia = findViewById<Button>(R.id.media)
-        val buttonMediaSetOnClickListener: View.OnClickListener = object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                val intent = Intent(this@MainActivity, MediaActivity::class.java)
-                startActivity(intent)
-            }
+        buttonMedia.setOnClickListener {
+            val intent = Intent(this, MediaActivity::class.java)
+            startActivity(intent)
         }
-        buttonMedia.setOnClickListener(buttonMediaSetOnClickListener)
 
         val buttonSettings = findViewById<Button>(R.id.setting)
         buttonSettings.setOnClickListener {
@@ -34,5 +30,4 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
 }

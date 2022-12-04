@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="MainTextViewStyle">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+    </style>
+    <style name="ActivityMainButtonStyle" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/null_size</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginStart">17dp</item>
+        <item name="android:layout_marginEnd">@dimen/casual_size</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:inputType">textCapWords</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:gravity">center</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">10dp</item>
+        <item name="iconTint">@color/black</item>
+        <item name="cornerRadius">@dimen/normal_size</item>
+    </style>
+    <style name="ActivitySettingsButtonStyle" parent="android:style/Widget.Holo.Button.Borderless">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">@dimen/normal_size</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginEnd">25dp</item>
+        <item name="android:inputType">textCapWords</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">@dimen/normal_text_size</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="thumbTint">@color/thumbDay</item>
+        <item name="trackTint">@color/trackDay</item>
+        <item name="iconGravity">end</item>
+        <item name="iconTint">@color/grey</item>
+    </style>
+    <style name="MainColor">
+        <item name="android:background">@color/main_screen</item>
+    </style>
+    <style name="SearchForm">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_marginLeft">@dimen/normal_size</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginRight">@dimen/normal_size</item>
+        <item name="cardCornerRadius">8dp</item>
+    </style>
+    <style name="EditTextSearching">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">center|start</item>
+        <item name="android:background">#E6E8EB</item>
+        <item name="android:drawablePadding">9dp</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:hint">@string/searching</item>
+        <item name="android:inputType">text</item>
+        <item name="android:maxLength">45</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:paddingStart">13dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textColorHint">@color/grey</item>
+        <item name="android:drawableTint" tools:targetApi="m">@color/grey</item>
+    </style>
+
+</resources>

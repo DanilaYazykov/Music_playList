@@ -4,8 +4,11 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,6 +18,16 @@ class SettingsActivity : AppCompatActivity() {
         val buttonBackFromSetting: TextView = findViewById(R.id.backFromSetting)
         buttonBackFromSetting.setOnClickListener {
             onBackPressed()
+        }
+
+        val buttonSwitchTheme: SwitchMaterial = findViewById(R.id.switchThemeMain)
+        val switchState = buttonSwitchTheme.isChecked
+        buttonSwitchTheme.setOnClickListener {
+            if (!switchState) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
         }
 
         val buttonShareApplication: Button = findViewById(R.id.shareApplication)
@@ -28,8 +41,8 @@ class SettingsActivity : AppCompatActivity() {
         val buttonTehSupport: Button = findViewById(R.id.writeToTehSupport)
         buttonTehSupport.setOnClickListener{
             val sendIntent = Intent(Intent.ACTION_SENDTO)
-            sendIntent.data = Uri.parse("mailto:")
-            sendIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("BigD90@ya.ru"))
+            sendIntent.data = Uri.parse(getString(R.string.mailTo))
+            sendIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email)))
             sendIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.message))
             sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.messageTheme))
             startActivity(sendIntent)

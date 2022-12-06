@@ -17,6 +17,10 @@ class SearchingActivity : AppCompatActivity() {
 
     private var text = ""
 
+    companion object {
+        const val TEXT_SEARCH = "textSearch"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_searching)
@@ -36,30 +40,27 @@ class SearchingActivity : AppCompatActivity() {
         }
 
         val simpleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // empty
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                inputEditText.setTextColor(getColor(R.color.black))
+                text = s.toString()
                 clearButton.visibility = clearButtonVisibility(s)
             }
 
-            override fun afterTextChanged(s: Editable?) {
-                // empty
-            }
+            override fun afterTextChanged(s: Editable?) {}
         }
         inputEditText.addTextChangedListener(simpleTextWatcher)
-
-        if (savedInstanceState != null) {
-            text = savedInstanceState.getString("textSearch", "")
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("textSearch", text)
+        outState.putString(TEXT_SEARCH, text)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        text = savedInstanceState.getString(TEXT_SEARCH,"")
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -68,6 +69,5 @@ class SearchingActivity : AppCompatActivity() {
         } else {
             View.VISIBLE
         }
-
     }
 }

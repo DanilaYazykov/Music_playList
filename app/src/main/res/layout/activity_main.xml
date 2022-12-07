@@ -1,86 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/main_screen"
     android:orientation="vertical"
-    android:paddingTop="14dp">
+    android:paddingTop="14dp"
+    style="@style/MainColor">
 
     <TextView
+        style="@style/MainTextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/normal_size"
         android:layout_marginEnd="210dp"
         android:text="@string/app_name"
         android:textColor="@color/white"
-        android:textStyle="bold"
-        android:textSize="22sp" />
+        />
 
     <Button
         android:id="@+id/search"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/null_size"
-        android:layout_weight="1"
         android:layout_marginTop="40dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="@dimen/casual_size"
-        android:backgroundTint="@color/white"
         android:text="@string/searching"
-        android:inputType="textCapWords"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="22sp"
-        android:gravity="center"
-        tools:ignore="TextViewEdits"
         app:icon="@drawable/ic_vector111"
-        app:iconGravity="textStart"
-        app:iconPadding="10dp"
-        app:iconTint="@color/black"
-        app:cornerRadius="@dimen/normal_size"/>
+        style="@style/ActivityMainButtonStyle"
+        />
 
     <Button
         android:id="@+id/media"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/null_size"
-        android:layout_weight="1"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="@dimen/casual_size"
-        android:backgroundTint="@color/white"
         android:text="@string/media"
-        android:inputType="textCapWords"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="22sp"
-        android:gravity="center"
-        tools:ignore="TextViewEdits"
         app:icon="@drawable/ic_vector22"
-        app:iconGravity="textStart"
-        app:iconPadding="10dp"
-        app:iconTint="@color/black"
-        app:cornerRadius="@dimen/normal_size"/>
+        style="@style/ActivityMainButtonStyle"
+        />
 
     <Button
         android:id="@+id/setting"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/null_size"
-        android:layout_weight="1"
-        android:layout_marginStart="17dp"
-        android:layout_marginEnd="@dimen/casual_size"
         android:layout_marginBottom="28dp"
-        android:backgroundTint="@color/white"
         android:text="@string/settings"
-        android:inputType="textCapWords"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="22sp"
-        android:gravity="center"
-        tools:ignore="TextViewEdits"
         app:icon="@drawable/ic_vector333"
-        app:iconGravity="textStart"
-        app:iconPadding="10dp"
-        app:iconTint="@color/black"
-        app:cornerRadius="@dimen/normal_size"/>
+        style="@style/ActivityMainButtonStyle"
+        />
 
 </LinearLayout>

@@ -16,7 +16,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val buttonBackFromSetting: TextView = findViewById(R.id.backFromSetting)
         buttonBackFromSetting.setOnClickListener {
-            onBackPressed()
+            finish()
         }
 
         val buttonSwitchTheme: SwitchMaterial = findViewById(R.id.switchThemeMain)

@@ -32,7 +32,9 @@
         <EditText
             android:id="@+id/inputEditText"
             style="@style/EditTextSearching"
-            android:drawableStart="@drawable/ic_vector111" />
+            android:drawableStart="@drawable/ic_vector111"
+            android:imeOptions="actionDone"
+            android:singleLine="true" />
 
         <ImageView
             android:id="@+id/clearIcon"
@@ -46,14 +48,79 @@
 
     </androidx.cardview.widget.CardView>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rcView_searching"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcView_searching"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="24dp"
+        android:animationCache="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <FrameLayout
+        android:id="@+id/iw_no_result_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:animationCache="true"
+        android:paddingBottom="160dp"
+        android:visibility="gone">
+
+        <ImageView style="@style/FlNoResult" />
+
+        <TextView
+            style="@style/MainTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="80dp"
+            android:text="@string/nothing_found" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/iw_no_connection_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:animationCache="true"
+        android:paddingBottom="160dp"
+        android:visibility="gone">
+
+        <ImageView style="@style/FlNoConnection" />
+
+        <TextView
+            style="@style/MainTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="80dp"
+            android:text="@string/internet_problem_text" />
+
+        <TextView
+            style="@style/MainTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="128dp"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="@string/internet_problem_text2" />
+
+        <Button
+            android:id="@+id/bt_update"
+            style="@style/BtReload"
+            android:layout_marginTop="180dp"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/reload"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            app:cornerRadius="56dp" />
+
+    </FrameLayout>
 
 </LinearLayout>

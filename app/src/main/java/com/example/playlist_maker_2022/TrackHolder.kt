@@ -7,6 +7,8 @@ import androidx.core.text.buildSpannedString
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -19,7 +21,12 @@ class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         nameOfGroup.text = buildSpannedString {
             append(track.artistName)
             append(" • ")
-            append(track.trackTime)
+            append(
+                SimpleDateFormat(
+                    "mm:ss",
+                    Locale.getDefault()
+                ).format(track.trackTimeMillis.toLong())
+            )
         }
         Glide.with(itemView)
             .load(track.artworkUrl100)

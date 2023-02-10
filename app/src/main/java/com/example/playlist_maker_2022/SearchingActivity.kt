@@ -1,27 +1,41 @@
 package com.example.playlist_maker_2022
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Build
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.annotation.RequiresApi
+import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlist_maker_2022.checkings.CheckingInternet
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchingActivity : AppCompatActivity() {
 
-    private var text = ""
-
     companion object {
         const val TEXT_SEARCH = "textSearch"
+        const val itunesUrl = "https://itunes.apple.com"
     }
+
+    private lateinit var text: String
+
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(itunesUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    private val itunesService = retrofit.create(ItunesApi::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +48,12 @@ class SearchingActivity : AppCompatActivity() {
 
         val inputEditText = findViewById<EditText>(R.id.inputEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
+        val trackRcView = findViewById<RecyclerView>(R.id.rcView_searching)
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
+            trackRcView.adapter = null
+            trackRcView.visibility = View.VISIBLE
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(inputEditText.windowToken, 0)
@@ -45,21 +62,23 @@ class SearchingActivity : AppCompatActivity() {
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            @RequiresApi(Build.VERSION_CODES.M)
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 text = s.toString()
+
+                inputEditText.setOnEditorActionListener { _, actionId, _ ->
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        responseTracks(text)
+                    }
+                    false
+                }
+
                 clearButton.visibility = clearButtonVisibility(s)
             }
 
             override fun afterTextChanged(s: Editable?) {}
         }
         inputEditText.addTextChangedListener(simpleTextWatcher)
-
-        val trackRcView = findViewById<RecyclerView>(R.id.rcView_searching)
-        trackRcView.layoutManager = LinearLayoutManager(this@SearchingActivity)
-        val trackAdapter = TrackAdapter(mockTracks())
-        trackRcView.adapter = trackAdapter
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -80,39 +99,72 @@ class SearchingActivity : AppCompatActivity() {
         }
     }
 
-    private fun mockTracks() : List<Track> {
-        val trackList = listOf(
-            Track(
-                trackName = "Smells Like Teen Spirit",
-                artistName = "Nirvana",
-                trackTime = "5:01",
-                artworkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg"
-            ),
-            Track(
-                trackName = "Billie Jean",
-                artistName = "Michael Jackson",
-                trackTime = "4:35",
-                artworkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg"
-            ),
-            Track(
-                trackName = "Stayin' Alive",
-                artistName = "Bee Gees",
-                trackTime = "4:10",
-                artworkUrl100 = "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"
-            ),
-            Track(
-                trackName = "Whole Lotta Love",
-                artistName = "Led Zeppelin",
-                trackTime = "5:33",
-                artworkUrl100 = "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-            ),
-            Track(
-                trackName = "Sweet Child O'Mine",
-                artistName = "Guns N' Roses",
-                trackTime = "5:03",
-                artworkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
-            )
-        )
-        return List(50) { trackList[it % trackList.size] }
+    private fun responseTracks(searchText: String) {
+        val trackRcView = findViewById<RecyclerView>(R.id.rcView_searching)
+        trackRcView.layoutManager = LinearLayoutManager(this@SearchingActivity)
+
+        if (searchText.isNotEmpty()) {
+            itunesService.search(searchText).enqueue(object : Callback<TrackResponse> {
+                @SuppressLint("NotifyDataSetChanged")
+                override fun onResponse(
+                    call: Call<TrackResponse>,
+                    response: Response<TrackResponse>
+                ) {
+                    val trackList = response.body()?.results
+                    val trackAdapter = TrackAdapter(trackList!!)
+                    trackRcView.adapter = trackAdapter
+
+                    setVisibility(response, trackList, trackAdapter)
+                }
+
+                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                    setVisibility(null, null, null)
+
+                    val checkingConnection = CheckingInternet()
+                    if (!checkingConnection.isNetworkAvailable(this@SearchingActivity)) {
+                        CheckingInternet.DialogManager.internetSettingsDialog(
+                            this@SearchingActivity,
+                            object : CheckingInternet.DialogManager.Listener {
+                                override fun onClick(name: String?) {
+                                    startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+                                }
+                            })
+                    }
+
+                    val updateButton = findViewById<Button>(R.id.bt_update)
+                    updateButton.setOnClickListener {
+                        responseTracks(text)
+                    }
+                    Log.d("onFailure", "onFailure: ${t.message}")
+                }
+            })
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun setVisibility(
+        response: Response<TrackResponse>?,
+        trackList: List<Track>?,
+        trackAdapter: TrackAdapter?
+    ) {
+        val flRcView = findViewById<RecyclerView>(R.id.rcView_searching)
+        val iwSearchNoResult = findViewById<FrameLayout>(R.id.iw_no_result_layout)
+        val iwNoConnection = findViewById<FrameLayout>(R.id.iw_no_connection_layout)
+
+        flRcView.visibility = View.VISIBLE
+
+        if (response != null && response.code() == 200) {
+            if (trackList != null && trackList.isNotEmpty()) {
+                trackAdapter?.notifyDataSetChanged()
+            } else {
+                flRcView.visibility = View.GONE
+                iwNoConnection.visibility = View.GONE
+                iwSearchNoResult.visibility = View.VISIBLE
+            }
+        } else {
+            flRcView.visibility = View.GONE
+            iwSearchNoResult.visibility = View.GONE
+            iwNoConnection.visibility = View.VISIBLE
+        }
     }
 }

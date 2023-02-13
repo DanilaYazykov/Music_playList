@@ -1,5 +1,6 @@
 package com.example.playlist_maker_2022
 
+import android.animation.ObjectAnimator
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,6 +19,18 @@ class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(track: Track) {
         nameOfSong.text = track.trackName
+
+        lateinit var animator: ObjectAnimator
+        if (nameOfSong.length() > 40) {
+            nameOfSong.setOnClickListener {
+                animator = ObjectAnimator.ofInt(nameOfSong, "scrollX", 0, 120)
+                animator.duration = 3000
+                animator.repeatCount = 1
+                animator.repeatMode = ObjectAnimator.REVERSE
+                animator.start()
+            }
+        }
+
         nameOfGroup.text = buildSpannedString {
             append(track.artistName)
             append(" • ")
@@ -35,5 +48,4 @@ class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .transform(RoundedCorners(5))
             .into(albumCover)
     }
-
 }

@@ -30,6 +30,9 @@ class SearchingActivity : AppCompatActivity() {
     }
 
     private lateinit var text: String
+    private lateinit var trackRcView: RecyclerView
+    private lateinit var trackAdapter: TrackAdapter
+    private var trackList = arrayListOf<Track>()
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(itunesUrl)
@@ -48,7 +51,7 @@ class SearchingActivity : AppCompatActivity() {
 
         val inputEditText = findViewById<EditText>(R.id.inputEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
-        val trackRcView = findViewById<RecyclerView>(R.id.rcView_searching)
+        trackRcView = findViewById(R.id.rcView_searching)
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
@@ -62,23 +65,20 @@ class SearchingActivity : AppCompatActivity() {
         val simpleTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 text = s.toString()
-
-                inputEditText.setOnEditorActionListener { _, actionId, _ ->
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        responseTracks(text)
-                    }
-                    false
-                }
-
                 clearButton.visibility = clearButtonVisibility(s)
             }
 
             override fun afterTextChanged(s: Editable?) {}
         }
         inputEditText.addTextChangedListener(simpleTextWatcher)
+        inputEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                responseTracks(text)
+            }
+            false
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -100,7 +100,6 @@ class SearchingActivity : AppCompatActivity() {
     }
 
     private fun responseTracks(searchText: String) {
-        val trackRcView = findViewById<RecyclerView>(R.id.rcView_searching)
         trackRcView.layoutManager = LinearLayoutManager(this@SearchingActivity)
 
         if (searchText.isNotEmpty()) {
@@ -110,10 +109,10 @@ class SearchingActivity : AppCompatActivity() {
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
                 ) {
-                    val trackList = response.body()?.results
-                    val trackAdapter = TrackAdapter(trackList!!)
+                    trackList.clear()
+                    trackList = (response.body()?.results ?: emptyList()) as ArrayList<Track>
+                    trackAdapter = TrackAdapter(trackList)
                     trackRcView.adapter = trackAdapter
-
                     setVisibility(response, trackList, trackAdapter)
                 }
 
@@ -144,25 +143,26 @@ class SearchingActivity : AppCompatActivity() {
     @SuppressLint("NotifyDataSetChanged")
     private fun setVisibility(
         response: Response<TrackResponse>?,
-        trackList: List<Track>?,
+        trackList: ArrayList<Track>?,
         trackAdapter: TrackAdapter?
     ) {
-        val flRcView = findViewById<RecyclerView>(R.id.rcView_searching)
+
         val iwSearchNoResult = findViewById<FrameLayout>(R.id.iw_no_result_layout)
         val iwNoConnection = findViewById<FrameLayout>(R.id.iw_no_connection_layout)
 
-        flRcView.visibility = View.VISIBLE
+        trackRcView.visibility = View.VISIBLE
 
         if (response != null && response.code() == 200) {
             if (trackList != null && trackList.isNotEmpty()) {
+                response.body()?.results?.let { trackList.addAll(it) }
                 trackAdapter?.notifyDataSetChanged()
             } else {
-                flRcView.visibility = View.GONE
+                trackRcView.visibility = View.GONE
                 iwNoConnection.visibility = View.GONE
                 iwSearchNoResult.visibility = View.VISIBLE
             }
         } else {
-            flRcView.visibility = View.GONE
+            trackRcView.visibility = View.GONE
             iwSearchNoResult.visibility = View.GONE
             iwNoConnection.visibility = View.VISIBLE
         }

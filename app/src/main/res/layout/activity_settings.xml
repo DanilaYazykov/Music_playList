@@ -35,7 +35,7 @@
         tools:ignore="TextViewEdits,TouchTargetSizeCheck" />
 
     <Button
-        android:id="@+id/writeToTehSupport"
+        android:id="@+id/bt_update"
         style="@style/ActivitySettingsButtonStyle"
         android:text="@string/teh_support"
         app:icon="@drawable/ic_group"

@@ -34,7 +34,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareApplication)
         }
 
-        val buttonTehSupport: Button = findViewById(R.id.writeToTehSupport)
+        val buttonTehSupport: Button = findViewById(R.id.bt_update)
         buttonTehSupport.setOnClickListener{
             val sendIntent = Intent(Intent.ACTION_SENDTO)
             sendIntent.data = Uri.parse(getString(R.string.mailTo))

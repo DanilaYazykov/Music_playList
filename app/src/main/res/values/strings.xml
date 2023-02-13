@@ -15,4 +15,10 @@
     <string name="practicumLink">https://practicum.yandex.ru/profile/android-developer/</string>
     <string name="email">BigD90@ya.ru</string>
     <string name="mailTo">mailto:</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="internet_problem_text">Проблемы со связью</string>
+    <string name="internet_problem_text2">Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="reload">Обновить</string>
 </resources>

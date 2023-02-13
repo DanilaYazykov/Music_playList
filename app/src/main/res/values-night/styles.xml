@@ -72,5 +72,24 @@
         <item name="android:drawableTint" tools:targetApi="m">@color/black</item>
         <item name="android:textColorHint">@color/black</item>
     </style>
+    <style name="FlNoResult">
+        <item name="android:src">@drawable/iw_no_result_night_mode</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+    <style name="FlNoConnection">
+        <item name="android:src">@drawable/iw_no_connection_night</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+    <style name="BtReload">
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
 
 </resources>

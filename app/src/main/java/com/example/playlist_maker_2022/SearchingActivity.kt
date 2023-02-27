@@ -64,26 +64,29 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         buttonBackFromSearching.setOnClickListener {
             finish()
         }
-
+        iwSearchNoResult = findViewById(R.id.iw_no_result_layout)
+        iwNoConnection = findViewById(R.id.iw_no_connection_layout)
+        searchHistory = findViewById(R.id.cl_search_history)
         searchRcView = findViewById(R.id.rV_search_history)
         trackRcView = findViewById(R.id.rcView_searching)
         sharedPrefs = getSharedPreferences("tracks", MODE_PRIVATE)
         val savedBeforeTracks = sharedPrefs.getString("searchTracks", null)
         if (savedBeforeTracks != null) {
-            val savedTracks = Gson().fromJson(savedBeforeTracks, Array<Track>::class.java).toList()
+            val savedTracks =
+                Gson().fromJson(savedBeforeTracks, Array<Track>::class.java)
             searchList.addAll(savedTracks)
         }
         searchRcView.layoutManager = LinearLayoutManager(this@SearchingActivity)
+
         searchAdapter = TrackAdapter(searchList, this)
         searchRcView.adapter = searchAdapter
         searchAdapter.notifyDataSetChanged()
         trackRcView.layoutManager = LinearLayoutManager(this@SearchingActivity)
+
         trackAdapter = TrackAdapter(trackList, this)
         trackRcView.adapter = trackAdapter
         trackAdapter.notifyDataSetChanged()
-        iwSearchNoResult = findViewById(R.id.iw_no_result_layout)
-        iwNoConnection = findViewById(R.id.iw_no_connection_layout)
-        searchHistory = findViewById(R.id.cl_search_history)
+
 
         if (searchList.isNotEmpty()) {
             searchHistory.visibility = View.VISIBLE
@@ -95,6 +98,7 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         clearButton.setOnClickListener {
             inputEditText.setText("")
             trackList.clear()
+            trackAdapter.notifyDataSetChanged()
             trackRcView.visibility = View.GONE
             iwSearchNoResult.visibility = View.GONE
             iwNoConnection.visibility = View.GONE
@@ -107,7 +111,14 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         }
 
         val simpleTextWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+            }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 text = s.toString()
                 clearButton.visibility = clearButtonVisibility(s)
@@ -128,13 +139,8 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         if (savedInstanceState != null) {
             text = savedInstanceState.getString(TEXT_SEARCH, "")
             @Suppress("DEPRECATION")
-            try {
-                recyclerViewState = savedInstanceState.getParcelable("recyclerViewState")
-                recyclerViewPosition = savedInstanceState.getInt("recyclerViewPosition")
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-
+                    recyclerViewState = savedInstanceState.getParcelable("recyclerViewState")
+                    recyclerViewPosition = savedInstanceState.getInt("recyclerViewPosition")
             if (text.isNotEmpty()) {
                 responseTracks(text)
                 inputEditText.setText(text)
@@ -206,7 +212,6 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
                     trackList.clear()
                     response.body()?.results?.let { trackList.addAll(it) }
                     trackAdapter.notifyDataSetChanged()
-                    //     searchAdapter.notifyDataSetChanged()
                     setVisibility(response, trackList, trackAdapter)
                 }
 
@@ -259,23 +264,26 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         val existingTrack = searchList.find { it.trackId == track.trackId }
         if (existingTrack != null) {
             searchList.remove(existingTrack)
-            searchList.add(0,existingTrack)
+            searchList.add(0, existingTrack)
             sharedPrefs.edit()
                 .putString("searchTracks", Gson().toJson(searchList))
                 .apply()
         } else {
-            searchList.add(0,track)
+            searchList.add(0, track)
             sharedPrefs.edit()
                 .putString("searchTracks", Gson().toJson(searchList))
                 .apply()
         }
 
         if (searchList.size > 10) {
-            val removedTrack = searchList.removeLast()
+            searchList.removeLast()
             sharedPrefs.edit()
-                .remove(removedTrack.trackId)
+                .remove("searchTracks")
                 .apply()
+            searchAdapter.notifyItemRemoved(searchList.lastIndex)
+            searchAdapter.notifyItemRangeChanged(searchList.lastIndex, searchList.size)
         }
+
         searchAdapter.notifyDataSetChanged()
     }
 }

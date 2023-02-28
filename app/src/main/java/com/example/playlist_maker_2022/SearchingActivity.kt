@@ -139,8 +139,8 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         if (savedInstanceState != null) {
             text = savedInstanceState.getString(TEXT_SEARCH, "")
             @Suppress("DEPRECATION")
-                    recyclerViewState = savedInstanceState.getParcelable("recyclerViewState")
-                    recyclerViewPosition = savedInstanceState.getInt("recyclerViewPosition")
+            recyclerViewState = savedInstanceState.getParcelable("recyclerViewState")
+            recyclerViewPosition = savedInstanceState.getInt("recyclerViewPosition")
             if (text.isNotEmpty()) {
                 responseTracks(text)
                 inputEditText.setText(text)
@@ -265,25 +265,15 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         if (existingTrack != null) {
             searchList.remove(existingTrack)
             searchList.add(0, existingTrack)
-            sharedPrefs.edit()
-                .putString("searchTracks", Gson().toJson(searchList))
-                .apply()
         } else {
             searchList.add(0, track)
-            sharedPrefs.edit()
-                .putString("searchTracks", Gson().toJson(searchList))
-                .apply()
         }
-
         if (searchList.size > 10) {
             searchList.removeLast()
-            sharedPrefs.edit()
-                .remove("searchTracks")
-                .apply()
-            searchAdapter.notifyItemRemoved(searchList.lastIndex)
-            searchAdapter.notifyItemRangeChanged(searchList.lastIndex, searchList.size)
         }
-
+        sharedPrefs.edit()
+            .putString("searchTracks", Gson().toJson(searchList))
+            .apply()
         searchAdapter.notifyDataSetChanged()
     }
 }

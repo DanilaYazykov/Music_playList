@@ -1,14 +1,12 @@
 package com.example.playlist_maker_2022
 
-import android.app.Application
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlist_maker_2022.sharedPref.App
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -52,30 +50,5 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-    }
-}
-
-class App : Application() {
-companion object {
-        var themeStatus = false
-        lateinit var sharedPrefs: SharedPreferences
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        sharedPrefs = getSharedPreferences("theme", MODE_PRIVATE)
-        switchTheme(sharedPrefs.getBoolean("ThemeStatus", false))
-    }
-
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        themeStatus = darkThemeEnabled
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
-        sharedPrefs.edit().putBoolean("ThemeStatus", themeStatus).apply()
     }
 }

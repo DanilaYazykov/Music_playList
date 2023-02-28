@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlist_maker_2022.sharedPref.App
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -20,10 +20,9 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val buttonSwitchTheme: SwitchMaterial = findViewById(R.id.switchThemeMain)
-        buttonSwitchTheme.setOnCheckedChangeListener { _, isChecked ->
-            AppCompatDelegate.setDefaultNightMode(
-                if(isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-            )
+        buttonSwitchTheme.isChecked = App.themeStatus
+        buttonSwitchTheme.setOnCheckedChangeListener { _, checked ->
+            (applicationContext as App).switchTheme(checked)
         }
 
         val buttonShareApplication: Button = findViewById(R.id.shareApplication)
@@ -35,7 +34,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val buttonTehSupport: Button = findViewById(R.id.bt_update)
-        buttonTehSupport.setOnClickListener{
+        buttonTehSupport.setOnClickListener {
             val sendIntent = Intent(Intent.ACTION_SENDTO)
             sendIntent.data = Uri.parse(getString(R.string.mailTo))
             sendIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email)))
@@ -45,7 +44,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val buttonAgreement: Button = findViewById(R.id.goToAgreement)
-        buttonAgreement.setOnClickListener{
+        buttonAgreement.setOnClickListener {
             val url = Uri.parse(getString(R.string.practicumOffer))
             val intent = Intent(Intent.ACTION_VIEW, url)
             startActivity(intent)

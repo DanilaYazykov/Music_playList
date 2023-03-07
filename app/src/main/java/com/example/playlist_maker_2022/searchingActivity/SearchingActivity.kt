@@ -7,7 +7,6 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Parcelable
-import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -17,20 +16,18 @@ import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlist_maker_2022.*
 import com.example.playlist_maker_2022.basicStatePlayer.BasicStatePlayer
-import com.example.playlist_maker_2022.checkings.CheckingInternet
 import com.example.playlist_maker_2022.databinding.ActivitySearchingBinding
 import com.example.playlist_maker_2022.repository.ItunesRepository
+import com.example.playlist_maker_2022.repository.ResponseTracks
 import com.google.gson.Gson
 import kotlinx.coroutines.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
 
     companion object {
         const val TEXT_SEARCH = "textSearch"
     }
+
     lateinit var bdnFun: ActivitySearchingBinding
 
     private var recyclerViewState: Parcelable? = null
@@ -112,7 +109,13 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         bdnFun.inputEditText.addTextChangedListener(simpleTextWatcher)
         bdnFun.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                responseTracks(text)
+                ResponseTracks().responseTracks(
+                    text,
+                    itunesService,
+                    trackList,
+                    trackAdapter,
+                    bdnFun
+                )
             }
             false
         }
@@ -123,7 +126,13 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
             recyclerViewState = savedInstanceState.getParcelable("recyclerViewState")
             recyclerViewPosition = savedInstanceState.getInt("recyclerViewPosition")
             if (text.isNotEmpty()) {
-                responseTracks(text)
+                ResponseTracks().responseTracks(
+                    text,
+                    itunesService,
+                    trackList,
+                    trackAdapter,
+                    bdnFun
+                )
                 bdnFun.inputEditText.setText(text)
             }
         }
@@ -172,40 +181,6 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         @Suppress("DEPRECATION")
         recyclerViewState = savedInstanceState.getParcelable("recycler_state")
         recyclerViewPosition = savedInstanceState.getInt("recycler_position", 0)
-    }
-
-    private fun responseTracks(searchText: String) {
-
-        if (searchText.isNotEmpty()) {
-            itunesService?.search(searchText)?.enqueue(object : Callback<TrackResponse> {
-                @SuppressLint("NotifyDataSetChanged")
-                override fun onResponse(
-                    call: Call<TrackResponse>,
-                    response: Response<TrackResponse>
-                ) {
-                    bdnFun.rcViewSearching.visibility = View.VISIBLE
-                    trackList.clear()
-                    response.body()?.results?.let { trackList.addAll(it) }
-                    trackAdapter.notifyDataSetChanged()
-                    SetVisibility(bdnFun).setVisibility(response, trackList, trackAdapter)
-                }
-
-                override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    SetVisibility(bdnFun).setVisibility(null, null, null)
-                    val checkingConnection = CheckingInternet()
-                    if (!checkingConnection.isNetworkAvailable(this@SearchingActivity)) {
-                        CheckingInternet.DialogManager.internetSettingsDialog(
-                            this@SearchingActivity,
-                            object : CheckingInternet.DialogManager.Listener {
-                                override fun onClick(name: String?) {
-                                    startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
-                                }
-                            })
-                    }
-                    bdnFun.btUpdate.setOnClickListener { responseTracks(text) }
-                }
-            })
-        }
     }
 
     @OptIn(DelicateCoroutinesApi::class)

@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/MainColor2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/MainColor2"
     tools:context=".basicStatePlayer.BasicStatePlayer">
 
     <androidx.constraintlayout.widget.Guideline
@@ -22,8 +22,8 @@
         app:layout_constraintGuide_end="24dp" />
 
     <ImageView
-        style="@style/backButton"
         android:id="@+id/backFromPlayer"
+        style="@style/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -52,12 +52,12 @@
         android:ellipsize="end"
         android:fontFamily="@font/ys_display_medium"
         android:maxLines="1"
-        tools:text="Sweet Child O'Mine"
         android:textSize="22sp"
         android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintStart_toStartOf="@+id/leftBorder"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        tools:text="Sweet Child O'Mine" />
 
 
     <TextView
@@ -84,8 +84,8 @@
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/ys_display_regular"
         android:text="@string/song_time"
-        android:textSize="13sp"
         android:textColor="#AEAFB4"
+        android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_album"
         app:layout_constraintStart_toStartOf="@+id/leftBorder"
         app:layout_goneMarginBottom="16dp" />
@@ -97,8 +97,8 @@
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/ys_display_regular"
         android:text="@string/album"
+        android:textColor="@color/secondGrey"
         android:textSize="13sp"
-        android:textColor="#AEAFB4"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/textView3"
         app:layout_constraintStart_toStartOf="@+id/leftBorder" />
@@ -110,8 +110,8 @@
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/ys_display_regular"
         android:text="@string/song_year"
-        android:textSize="13sp"
         android:textColor="#AEAFB4"
+        android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/textView4"
         app:layout_constraintStart_toStartOf="@+id/leftBorder" />
 
@@ -122,8 +122,8 @@
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/ys_display_regular"
         android:text="@string/song_ganre"
-        android:textSize="13sp"
         android:textColor="#AEAFB4"
+        android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/textView5"
         app:layout_constraintStart_toStartOf="@+id/leftBorder" />
 
@@ -134,8 +134,8 @@
         android:layout_marginBottom="20dp"
         android:fontFamily="@font/ys_display_regular"
         android:text="@string/group_country"
-        android:textSize="13sp"
         android:textColor="#AEAFB4"
+        android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/leftBorder" />
 
@@ -148,11 +148,11 @@
         android:ellipsize="end"
         android:gravity="end"
         android:textSize="13sp"
-        tools:text="USA"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
-        app:layout_constraintStart_toStartOf="@+id/tv_genre_name" />
+        app:layout_constraintStart_toStartOf="@+id/tv_genre_name"
+        tools:text="USA" />
 
     <TextView
         android:id="@+id/tv_track_time"
@@ -235,8 +235,8 @@
         app:tint="@color/white" />
 
     <ImageButton
-        style="@style/playButton"
         android:id="@+id/floatingActionButton3"
+        style="@style/playButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@android:color/white"

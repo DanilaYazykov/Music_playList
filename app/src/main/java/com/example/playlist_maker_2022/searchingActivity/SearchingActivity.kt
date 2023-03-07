@@ -1,4 +1,4 @@
-package com.example.playlist_maker_2022
+package com.example.playlist_maker_2022.searchingActivity
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -14,61 +14,45 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.example.playlist_maker_2022.*
+import com.example.playlist_maker_2022.basicStatePlayer.BasicStatePlayer
 import com.example.playlist_maker_2022.checkings.CheckingInternet
+import com.example.playlist_maker_2022.databinding.ActivitySearchingBinding
+import com.example.playlist_maker_2022.repository.ItunesRepository
 import com.google.gson.Gson
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
 
     companion object {
         const val TEXT_SEARCH = "textSearch"
-        const val itunesUrl = "https://itunes.apple.com"
     }
+    lateinit var bdnFun: ActivitySearchingBinding
 
     private var recyclerViewState: Parcelable? = null
     private var recyclerViewPosition = 0
 
     private var text: String = ""
-    private lateinit var clearSearchButton: Button
-    private lateinit var searchHistory: ConstraintLayout
-    private lateinit var trackRcView: RecyclerView
-    private lateinit var searchRcView: RecyclerView
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var searchAdapter: TrackAdapter
     private lateinit var sharedPrefs: SharedPreferences
-    private lateinit var iwSearchNoResult: FrameLayout
-    private lateinit var iwNoConnection: FrameLayout
 
     private var trackList = ArrayList<Track>()
     private var searchList = ArrayList<Track>()
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(itunesUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val itunesService = retrofit.create(ItunesApi::class.java)
+    private val itunesService = ItunesRepository().itunesService
 
     @SuppressLint("NotifyDataSetChanged", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_searching)
+        bdnFun = ActivitySearchingBinding.inflate(layoutInflater)
+        setContentView(bdnFun.root)
 
-        val buttonBackFromSearching: TextView = findViewById(R.id.backFromSearching)
-        buttonBackFromSearching.setOnClickListener {
-            finish()
-        }
-        iwSearchNoResult = findViewById(R.id.iw_no_result_layout)
-        iwNoConnection = findViewById(R.id.iw_no_connection_layout)
-        searchHistory = findViewById(R.id.cl_search_history)
-        searchRcView = findViewById(R.id.rV_search_history)
-        trackRcView = findViewById(R.id.rcView_searching)
+        bdnFun.backFromSearching.setOnClickListener { finish() }
         sharedPrefs = getSharedPreferences("tracks", MODE_PRIVATE)
         val savedBeforeTracks = sharedPrefs.getString("searchTracks", null)
         if (savedBeforeTracks != null) {
@@ -76,38 +60,35 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
                 Gson().fromJson(savedBeforeTracks, Array<Track>::class.java)
             searchList.addAll(savedTracks)
         }
-        searchRcView.layoutManager = LinearLayoutManager(this@SearchingActivity)
+        bdnFun.rVSearchHistory.layoutManager = LinearLayoutManager(this@SearchingActivity)
 
         searchAdapter = TrackAdapter(searchList, this)
-        searchRcView.adapter = searchAdapter
+        bdnFun.rVSearchHistory.adapter = searchAdapter
         searchAdapter.notifyDataSetChanged()
-        trackRcView.layoutManager = LinearLayoutManager(this@SearchingActivity)
+        bdnFun.rcViewSearching.layoutManager = LinearLayoutManager(this@SearchingActivity)
 
         trackAdapter = TrackAdapter(trackList, this)
-        trackRcView.adapter = trackAdapter
+        bdnFun.rcViewSearching.adapter = trackAdapter
         trackAdapter.notifyDataSetChanged()
 
 
         if (searchList.isNotEmpty()) {
-            searchHistory.visibility = View.VISIBLE
+            bdnFun.clSearchHistory.visibility = View.VISIBLE
         }
 
-        val inputEditText = findViewById<EditText>(R.id.inputEditText)
-        val clearButton = findViewById<ImageView>(R.id.clearIcon)
-
-        clearButton.setOnClickListener {
-            inputEditText.setText("")
+        bdnFun.clearIcon.setOnClickListener {
+            bdnFun.inputEditText.setText("")
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
-            trackRcView.visibility = View.GONE
-            iwSearchNoResult.visibility = View.GONE
-            iwNoConnection.visibility = View.GONE
+            bdnFun.rcViewSearching.visibility = View.GONE
+            bdnFun.iwNoResultLayout.visibility = View.GONE
+            bdnFun.iwNoConnectionLayout.visibility = View.GONE
             if (searchList.isNotEmpty()) {
-                searchHistory.visibility = View.VISIBLE
+                bdnFun.clSearchHistory.visibility = View.VISIBLE
             }
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(inputEditText.windowToken, 0)
+            inputMethodManager?.hideSoftInputFromWindow(bdnFun.inputEditText.windowToken, 0)
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -121,15 +102,15 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 text = s.toString()
-                clearButton.visibility = clearButtonVisibility(s)
+                bdnFun.clearIcon.visibility = SetVisibility(bdnFun).clearButtonVisibility(s)
             }
 
             override fun afterTextChanged(s: Editable?) {
-                searchHistory.visibility = View.GONE
+                bdnFun.clSearchHistory.visibility = View.GONE
             }
         }
-        inputEditText.addTextChangedListener(simpleTextWatcher)
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
+        bdnFun.inputEditText.addTextChangedListener(simpleTextWatcher)
+        bdnFun.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 responseTracks(text)
             }
@@ -143,23 +124,22 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
             recyclerViewPosition = savedInstanceState.getInt("recyclerViewPosition")
             if (text.isNotEmpty()) {
                 responseTracks(text)
-                inputEditText.setText(text)
+                bdnFun.inputEditText.setText(text)
             }
         }
 
-        clearSearchButton = findViewById(R.id.bt_clear_search)
-        clearSearchButton.setOnClickListener {
+        bdnFun.btClearSearch.setOnClickListener {
             sharedPrefs.edit()
                 .clear()
                 .apply()
             searchList.clear()
             searchAdapter.notifyDataSetChanged()
-            searchHistory.animate()
+            bdnFun.clSearchHistory.animate()
                 .alpha(0f)
                 .setDuration(1000)
                 .withEndAction {
-                    searchHistory.visibility = View.GONE
-                    searchHistory.alpha = 1f
+                    bdnFun.clSearchHistory.visibility = View.GONE
+                    bdnFun.clSearchHistory.alpha = 1f
                 }
                 .start()
         }
@@ -168,17 +148,20 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
     override fun onResume() {
         super.onResume()
         if (recyclerViewState != null) {
-            trackRcView.layoutManager?.onRestoreInstanceState(recyclerViewState)
-            trackRcView.scrollToPosition(recyclerViewPosition)
+            bdnFun.rcViewSearching.layoutManager?.onRestoreInstanceState(recyclerViewState)
+            bdnFun.rcViewSearching.scrollToPosition(recyclerViewPosition)
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(TEXT_SEARCH, text)
-        outState.putParcelable("recycler_state", trackRcView.layoutManager?.onSaveInstanceState())
+        outState.putParcelable(
+            "recycler_state",
+            bdnFun.rcViewSearching.layoutManager?.onSaveInstanceState()
+        )
         recyclerViewPosition =
-            (trackRcView.layoutManager as LinearLayoutManager?)?.findFirstCompletelyVisibleItemPosition()
+            (bdnFun.rcViewSearching.layoutManager as LinearLayoutManager?)?.findFirstCompletelyVisibleItemPosition()
                 ?: 0
         outState.putInt("recycler_position", recyclerViewPosition)
     }
@@ -191,32 +174,24 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         recyclerViewPosition = savedInstanceState.getInt("recycler_position", 0)
     }
 
-    private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-    }
-
     private fun responseTracks(searchText: String) {
 
         if (searchText.isNotEmpty()) {
-            itunesService.search(searchText).enqueue(object : Callback<TrackResponse> {
+            itunesService?.search(searchText)?.enqueue(object : Callback<TrackResponse> {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun onResponse(
                     call: Call<TrackResponse>,
                     response: Response<TrackResponse>
                 ) {
-                    trackRcView.visibility = View.VISIBLE
+                    bdnFun.rcViewSearching.visibility = View.VISIBLE
                     trackList.clear()
                     response.body()?.results?.let { trackList.addAll(it) }
                     trackAdapter.notifyDataSetChanged()
-                    setVisibility(response, trackList, trackAdapter)
+                    SetVisibility(bdnFun).setVisibility(response, trackList, trackAdapter)
                 }
 
                 override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                    setVisibility(null, null, null)
+                    SetVisibility(bdnFun).setVisibility(null, null, null)
                     val checkingConnection = CheckingInternet()
                     if (!checkingConnection.isNetworkAvailable(this@SearchingActivity)) {
                         CheckingInternet.DialogManager.internetSettingsDialog(
@@ -227,38 +202,13 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
                                 }
                             })
                     }
-
-                    val updateButton = findViewById<Button>(R.id.bt_update)
-                    updateButton.setOnClickListener {
-                        responseTracks(text)
-                    }
+                    bdnFun.btUpdate.setOnClickListener { responseTracks(text) }
                 }
             })
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun setVisibility(
-        response: Response<TrackResponse>?,
-        trackList: ArrayList<Track>?,
-        trackAdapter: TrackAdapter?
-    ) {
-        if (response != null && response.code() == 200) {
-            if (trackList != null && trackList.isNotEmpty()) {
-                response.body()?.results?.let { trackList.addAll(it) }
-                trackAdapter?.notifyDataSetChanged()
-            } else {
-                trackRcView.visibility = View.GONE
-                iwNoConnection.visibility = View.GONE
-                iwSearchNoResult.visibility = View.VISIBLE
-            }
-        } else {
-            trackRcView.visibility = View.GONE
-            iwSearchNoResult.visibility = View.GONE
-            iwNoConnection.visibility = View.VISIBLE
-        }
-    }
-
+    @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("NotifyDataSetChanged")
     override fun onTrackClick(track: Track) {
         val existingTrack = searchList.find { it.trackId == track.trackId }
@@ -274,6 +224,12 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         sharedPrefs.edit()
             .putString("searchTracks", Gson().toJson(searchList))
             .apply()
-        searchAdapter.notifyDataSetChanged()
+        GlobalScope.launch(Dispatchers.Main) {
+            delay(500)
+            searchAdapter.notifyDataSetChanged()
+        }
+        val intent = Intent(this, BasicStatePlayer::class.java)
+        intent.putExtra("trackKey", Gson().toJson(track))
+        startActivity(intent)
     }
 }

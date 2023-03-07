@@ -91,6 +91,9 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
     </style>
+    <style name="backButton">
+        <item name="android:tint">@color/black</item>
+    </style>
 
 
 </resources>

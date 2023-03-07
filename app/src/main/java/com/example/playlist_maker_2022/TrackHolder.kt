@@ -36,13 +36,10 @@ class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             append(track.artistName)
             append(" • ")
             append(
-                // поймал ошибку NumberFormatException, поэтому добавил проверку.
-                // вводил в поисковике "James"
-                if (track.trackTimeMillis != null) {
-                    SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(track.trackTimeMillis.toLong()) } else "00:00"
+                SimpleDateFormat(
+                    "mm:ss",
+                    Locale.getDefault()
+                ).format(track.trackTimeMillis.toLong())
             )
         }
         Glide.with(itemView)

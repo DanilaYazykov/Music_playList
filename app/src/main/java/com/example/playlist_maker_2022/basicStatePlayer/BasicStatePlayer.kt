@@ -1,12 +1,15 @@
 package com.example.playlist_maker_2022.basicStatePlayer
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.Track
 import com.example.playlist_maker_2022.databinding.ActivityBasicStatePlayerBinding
+import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -18,15 +21,15 @@ class BasicStatePlayer : AppCompatActivity() {
         const val TRACK_KEY = "trackKey"
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBasicStatePlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.backFromPlayer.setOnClickListener { finish() }
-
-        @Suppress("DEPRECATION")
-        val track = intent.getParcelableExtra<Track>(TRACK_KEY)
+        val trackJson = intent.getStringExtra(TRACK_KEY)
+        val track = Gson().fromJson(trackJson, Track::class.java)
 
         binding.tvNameOfSong.text = track?.trackName
         binding.tvNameOfGroup.text = track?.artistName

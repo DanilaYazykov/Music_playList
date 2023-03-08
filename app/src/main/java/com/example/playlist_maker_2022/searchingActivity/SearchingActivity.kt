@@ -204,7 +204,7 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
             searchAdapter.notifyDataSetChanged()
         }
         val intent = Intent(this, BasicStatePlayer::class.java)
-        intent.putExtra("trackKey", Gson().toJson(track))
+        intent.putExtra(BasicStatePlayer.TRACK_KEY, track)
         startActivity(intent)
     }
 }

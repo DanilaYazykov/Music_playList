@@ -23,4 +23,9 @@
     <string name="reload">Обновить</string>
     <string name="yoursSearched">Вы искали</string>
     <string name="bt_clear_search">Очистить историю</string>
+    <string name="song_time">Длительность</string>
+    <string name="album">Альбом</string>
+    <string name="song_year">Год</string>
+    <string name="song_ganre">Жанр</string>
+    <string name="group_country">Страна</string>
 </resources>

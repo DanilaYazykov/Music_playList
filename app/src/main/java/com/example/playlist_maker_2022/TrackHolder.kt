@@ -18,31 +18,14 @@ class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(track: Track) {
         nameOfSong.text = track.trackName
-
-/*      Текст песни не помещается в TextView, поэтому сделал так, чтобы он прокручивался
-        Чтобы не перегружать приложение, пока в разметке TextView указал android:ellipsize="end"
-        lateinit var animator: ObjectAnimator
-        if (nameOfSong.length() > 40) {
-            nameOfSong.setOnClickListener {
-                animator = ObjectAnimator.ofInt(nameOfSong, "scrollX", 0, 200)
-                animator.duration = 3000
-                animator.repeatCount = 1
-                animator.repeatMode = ObjectAnimator.REVERSE
-                animator.start()
-            }
-        }*/
-
         nameOfGroup.text = buildSpannedString {
             append(track.artistName)
             append(" • ")
             append(
-                // поймал ошибку NumberFormatException, поэтому добавил проверку.
-                // вводил в поисковике "James"
-                if (track.trackTimeMillis != null) {
-                    SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(track.trackTimeMillis.toLong()) } else "00:00"
+                SimpleDateFormat(
+                    "mm:ss",
+                    Locale.getDefault()
+                ).format(track.trackTimeMillis.toLong())
             )
         }
         Glide.with(itemView)

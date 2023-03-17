@@ -94,6 +94,9 @@
     <style name="backButton">
         <item name="android:tint">@color/black</item>
     </style>
+    <style name="playButton">
+        <item name="android:background">@color/black</item>
+    </style>
 
 
 </resources>

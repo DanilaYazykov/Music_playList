@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Parcelable
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -16,10 +17,12 @@ import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlist_maker_2022.*
 import com.example.playlist_maker_2022.basicStatePlayer.BasicStatePlayer
+import com.example.playlist_maker_2022.checkings.CheckingInternet
 import com.example.playlist_maker_2022.databinding.ActivitySearchingBinding
 import com.example.playlist_maker_2022.repository.ItunesRepository
 import com.example.playlist_maker_2022.repository.ResponseTracks
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_searching.*
 import kotlinx.coroutines.*
 
 class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
@@ -28,8 +31,7 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         const val TEXT_SEARCH = "textSearch"
     }
 
-    lateinit var bdnFun: ActivitySearchingBinding
-
+    private lateinit var bdnFun: ActivitySearchingBinding
     private var recyclerViewState: Parcelable? = null
     private var recyclerViewPosition = 0
 
@@ -37,15 +39,19 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var searchAdapter: TrackAdapter
     private lateinit var sharedPrefs: SharedPreferences
-
     private var trackList = ArrayList<Track>()
     private var searchList = ArrayList<Track>()
-
     private val itunesService = ItunesRepository().itunesService
+    private val debounce by lazy {
+        Debounce(
+            bdnFun.inputEditText, itunesService, trackList, trackAdapter, bdnFun
+        )
+    }
 
     @SuppressLint("NotifyDataSetChanged", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         bdnFun = ActivitySearchingBinding.inflate(layoutInflater)
         setContentView(bdnFun.root)
 
@@ -68,7 +74,6 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         bdnFun.rcViewSearching.adapter = trackAdapter
         trackAdapter.notifyDataSetChanged()
 
-
         if (searchList.isNotEmpty()) {
             bdnFun.clSearchHistory.visibility = View.VISIBLE
         }
@@ -77,9 +82,6 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
             bdnFun.inputEditText.setText("")
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
-            bdnFun.rcViewSearching.visibility = View.GONE
-            bdnFun.iwNoResultLayout.visibility = View.GONE
-            bdnFun.iwNoConnectionLayout.visibility = View.GONE
             if (searchList.isNotEmpty()) {
                 bdnFun.clSearchHistory.visibility = View.VISIBLE
             }
@@ -99,23 +101,32 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 text = s.toString()
-                bdnFun.clearIcon.visibility = SetVisibility(bdnFun).clearButtonVisibility(s)
+                bdnFun.clearIcon.visibility = SetVisibility(bdnFun).buttonVisibility(s)
+                debounce.searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {
-                bdnFun.clSearchHistory.visibility = View.GONE
+                if (text.isBlank() && searchList.isNotEmpty()) {
+                    bdnFun.clSearchHistory.visibility = View.VISIBLE
+                }
             }
         }
         bdnFun.inputEditText.addTextChangedListener(simpleTextWatcher)
         bdnFun.inputEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                ResponseTracks().responseTracks(
-                    text,
-                    itunesService,
-                    trackList,
-                    trackAdapter,
-                    bdnFun
-                )
+            if (CheckingInternet().isNetworkAvailable(this)) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    ResponseTracks().responseTracks(
+                        text, itunesService, trackList, trackAdapter, bdnFun
+                    )
+                }
+            } else {
+                SetVisibility(bdnFun).simpleVisibility(2)
+                CheckingInternet.DialogManager.internetSettingsDialog(
+                    this, object : CheckingInternet.DialogManager.Listener {
+                        override fun onClick(name: String?) {
+                            startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+                        }
+                    })
             }
             false
         }
@@ -127,11 +138,7 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
             recyclerViewPosition = savedInstanceState.getInt("recyclerViewPosition")
             if (text.isNotEmpty()) {
                 ResponseTracks().responseTracks(
-                    text,
-                    itunesService,
-                    trackList,
-                    trackAdapter,
-                    bdnFun
+                    text, itunesService, trackList, trackAdapter, bdnFun
                 )
                 bdnFun.inputEditText.setText(text)
             }
@@ -147,11 +154,15 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
                 .alpha(0f)
                 .setDuration(1000)
                 .withEndAction {
+                    SetVisibility(bdnFun).simpleVisibility(3)
                     bdnFun.clSearchHistory.visibility = View.GONE
                     bdnFun.clSearchHistory.alpha = 1f
                 }
                 .start()
         }
+        bdnFun.btUpdate.setOnClickListener { ResponseTracks().responseTracks(
+            text, itunesService, trackList, trackAdapter, bdnFun
+        ) }
     }
 
     override fun onResume() {
@@ -202,9 +213,15 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         GlobalScope.launch(Dispatchers.Main) {
             delay(500)
             searchAdapter.notifyDataSetChanged()
+            repeat(100) {
+                println(it.toString())
+            }
         }
-        val intent = Intent(this, BasicStatePlayer::class.java)
-        intent.putExtra(BasicStatePlayer.TRACK_KEY, Gson().toJson(track))
-        startActivity(intent)
+        if (debounce.clickDebounce()) {
+            val intent = Intent(this, BasicStatePlayer::class.java)
+            // intent.putExtra(BasicStatePlayer.TRACK_KEY, Gson().toJson(track))
+            intent.putExtra(BasicStatePlayer.TRACK_KEY, track)
+            startActivity(intent)
+        }
     }
 }

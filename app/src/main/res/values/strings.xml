@@ -28,4 +28,9 @@
     <string name="song_year">Год</string>
     <string name="song_ganre">Жанр</string>
     <string name="group_country">Страна</string>
+    <string name="NoInternetConnection">Отсутствует интернет соединение</string>
+    <string name="Connect_to_internet">Для корректной работы требуется подключить интернет соединение</string>
+    <string name="OK">Ок</string>
+    <string name="Cancel">Отмена</string>
+    <string name="StartTime">00:00</string>
 </resources>

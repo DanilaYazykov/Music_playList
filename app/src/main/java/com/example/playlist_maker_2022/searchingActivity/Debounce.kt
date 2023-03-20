@@ -2,38 +2,36 @@ package com.example.playlist_maker_2022.searchingActivity
 
 import android.os.Handler
 import android.os.Looper
-import android.widget.EditText
 import com.example.playlist_maker_2022.databinding.ActivitySearchingBinding
 import com.example.playlist_maker_2022.repository.ResponseTracks
 
 class Debounce(
-    private val editText: EditText,
     private val itunesService: ItunesApi?,
     private val trackList: ArrayList<Track>,
     private val trackAdapter: TrackAdapter,
-    private val bdnFun: ActivitySearchingBinding
+    private val binding: ActivitySearchingBinding
 ) {
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
+    private var isClickAllowed = true
     private val handler: Handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { ResponseTracks().responseTracks(
-            editText.text.toString(),
+            binding.inputEditText.text.toString(),
             itunesService,
             trackList,
             trackAdapter,
-            bdnFun
+            binding
         ) }
 
     fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-        SetVisibility(bdnFun).simpleVisibility(1)
+        SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_PROGRESSBAR)
     }
 
-    private var isClickAllowed = true
 
     fun clickDebounce(): Boolean {
         val current = isClickAllowed

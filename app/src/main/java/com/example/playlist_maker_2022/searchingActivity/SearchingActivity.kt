@@ -24,6 +24,7 @@ import com.example.playlist_maker_2022.repository.ResponseTracks
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_searching.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.NonCancellable.cancel
 
 class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
 
@@ -31,7 +32,7 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         const val TEXT_SEARCH = "textSearch"
     }
 
-    private lateinit var bdnFun: ActivitySearchingBinding
+    private lateinit var binding: ActivitySearchingBinding
     private var recyclerViewState: Parcelable? = null
     private var recyclerViewPosition = 0
 
@@ -44,7 +45,7 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
     private val itunesService = ItunesRepository().itunesService
     private val debounce by lazy {
         Debounce(
-            bdnFun.inputEditText, itunesService, trackList, trackAdapter, bdnFun
+            itunesService, trackList, trackAdapter, binding
         )
     }
 
@@ -52,10 +53,10 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        bdnFun = ActivitySearchingBinding.inflate(layoutInflater)
-        setContentView(bdnFun.root)
+        binding = ActivitySearchingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        bdnFun.backFromSearching.setOnClickListener { finish() }
+        binding.backFromSearching.setOnClickListener { finish() }
         sharedPrefs = getSharedPreferences("tracks", MODE_PRIVATE)
         val savedBeforeTracks = sharedPrefs.getString("searchTracks", null)
         if (savedBeforeTracks != null) {
@@ -63,31 +64,31 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
                 Gson().fromJson(savedBeforeTracks, Array<Track>::class.java)
             searchList.addAll(savedTracks)
         }
-        bdnFun.rVSearchHistory.layoutManager = LinearLayoutManager(this@SearchingActivity)
+        binding.rVSearchHistory.layoutManager = LinearLayoutManager(this@SearchingActivity)
 
         searchAdapter = TrackAdapter(searchList, this)
-        bdnFun.rVSearchHistory.adapter = searchAdapter
+        binding.rVSearchHistory.adapter = searchAdapter
         searchAdapter.notifyDataSetChanged()
-        bdnFun.rcViewSearching.layoutManager = LinearLayoutManager(this@SearchingActivity)
+        binding.rcViewSearching.layoutManager = LinearLayoutManager(this@SearchingActivity)
 
         trackAdapter = TrackAdapter(trackList, this)
-        bdnFun.rcViewSearching.adapter = trackAdapter
+        binding.rcViewSearching.adapter = trackAdapter
         trackAdapter.notifyDataSetChanged()
 
         if (searchList.isNotEmpty()) {
-            bdnFun.clSearchHistory.visibility = View.VISIBLE
+            binding.clSearchHistory.visibility = View.VISIBLE
         }
 
-        bdnFun.clearIcon.setOnClickListener {
-            bdnFun.inputEditText.setText("")
+        binding.clearIcon.setOnClickListener {
+            binding.inputEditText.setText("")
             trackList.clear()
             trackAdapter.notifyDataSetChanged()
             if (searchList.isNotEmpty()) {
-                bdnFun.clSearchHistory.visibility = View.VISIBLE
+                SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_HISTORY_SEARCHING_RESULT)
             }
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(bdnFun.inputEditText.windowToken, 0)
+            inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -101,26 +102,34 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 text = s.toString()
-                bdnFun.clearIcon.visibility = SetVisibility(bdnFun).buttonVisibility(s)
-                debounce.searchDebounce()
+                binding.clearIcon.visibility = SetVisibility(binding).buttonVisibility(s)
+                if (text.isNotEmpty()) {
+                    debounce.searchDebounce()
+                } else {
+                    debounce.searchDebounce().apply {
+                        binding.rlProgressBar.visibility = SetVisibility(binding).buttonVisibility(s)
+                        @Suppress("DEPRECATION")
+                        cancel()
+                    }
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {
                 if (text.isBlank() && searchList.isNotEmpty()) {
-                    bdnFun.clSearchHistory.visibility = View.VISIBLE
+                    SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_HISTORY_SEARCHING_RESULT)
                 }
             }
         }
-        bdnFun.inputEditText.addTextChangedListener(simpleTextWatcher)
-        bdnFun.inputEditText.setOnEditorActionListener { _, actionId, _ ->
+        binding.inputEditText.addTextChangedListener(simpleTextWatcher)
+        binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (CheckingInternet().isNetworkAvailable(this)) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     ResponseTracks().responseTracks(
-                        text, itunesService, trackList, trackAdapter, bdnFun
+                        text, itunesService, trackList, trackAdapter, binding
                     )
                 }
             } else {
-                SetVisibility(bdnFun).simpleVisibility(2)
+                SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_NO_CONNECTION)
                 CheckingInternet.DialogManager.internetSettingsDialog(
                     this, object : CheckingInternet.DialogManager.Listener {
                         override fun onClick(name: String?) {
@@ -138,38 +147,40 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
             recyclerViewPosition = savedInstanceState.getInt("recyclerViewPosition")
             if (text.isNotEmpty()) {
                 ResponseTracks().responseTracks(
-                    text, itunesService, trackList, trackAdapter, bdnFun
+                    text, itunesService, trackList, trackAdapter, binding
                 )
-                bdnFun.inputEditText.setText(text)
+                binding.inputEditText.setText(text)
             }
         }
 
-        bdnFun.btClearSearch.setOnClickListener {
+        binding.btClearSearch.setOnClickListener {
             sharedPrefs.edit()
                 .clear()
                 .apply()
             searchList.clear()
             searchAdapter.notifyDataSetChanged()
-            bdnFun.clSearchHistory.animate()
+            binding.clSearchHistory.animate()
                 .alpha(0f)
                 .setDuration(1000)
                 .withEndAction {
-                    SetVisibility(bdnFun).simpleVisibility(3)
-                    bdnFun.clSearchHistory.visibility = View.GONE
-                    bdnFun.clSearchHistory.alpha = 1f
+                    SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_SEARCHING_RESULT)
+                    binding.clSearchHistory.visibility = View.GONE
+                    binding.clSearchHistory.alpha = 1f
                 }
                 .start()
         }
-        bdnFun.btUpdate.setOnClickListener { ResponseTracks().responseTracks(
-            text, itunesService, trackList, trackAdapter, bdnFun
-        ) }
+        binding.btUpdate.setOnClickListener {
+            ResponseTracks().responseTracks(
+                text, itunesService, trackList, trackAdapter, binding
+            )
+        }
     }
 
     override fun onResume() {
         super.onResume()
         if (recyclerViewState != null) {
-            bdnFun.rcViewSearching.layoutManager?.onRestoreInstanceState(recyclerViewState)
-            bdnFun.rcViewSearching.scrollToPosition(recyclerViewPosition)
+            binding.rcViewSearching.layoutManager?.onRestoreInstanceState(recyclerViewState)
+            binding.rcViewSearching.scrollToPosition(recyclerViewPosition)
         }
     }
 
@@ -178,10 +189,10 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         outState.putString(TEXT_SEARCH, text)
         outState.putParcelable(
             "recycler_state",
-            bdnFun.rcViewSearching.layoutManager?.onSaveInstanceState()
+            binding.rcViewSearching.layoutManager?.onSaveInstanceState()
         )
         recyclerViewPosition =
-            (bdnFun.rcViewSearching.layoutManager as LinearLayoutManager?)?.findFirstCompletelyVisibleItemPosition()
+            (binding.rcViewSearching.layoutManager as LinearLayoutManager?)?.findFirstCompletelyVisibleItemPosition()
                 ?: 0
         outState.putInt("recycler_position", recyclerViewPosition)
     }
@@ -219,7 +230,6 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         }
         if (debounce.clickDebounce()) {
             val intent = Intent(this, BasicStatePlayer::class.java)
-            // intent.putExtra(BasicStatePlayer.TRACK_KEY, Gson().toJson(track))
             intent.putExtra(BasicStatePlayer.TRACK_KEY, track)
             startActivity(intent)
         }

@@ -5,7 +5,14 @@ import android.view.View
 import com.example.playlist_maker_2022.databinding.ActivitySearchingBinding
 import retrofit2.Response
 
-class SetVisibility(private val bdnFun: ActivitySearchingBinding) {
+class SetVisibility(private val binding: ActivitySearchingBinding) {
+
+    companion object {
+        const val SHOW_PROGRESSBAR = 1
+        const val SHOW_NO_CONNECTION = 2
+        const val SHOW_SEARCHING_RESULT = 3
+        const val SHOW_HISTORY_SEARCHING_RESULT = 4
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun setVisibility(
@@ -15,25 +22,23 @@ class SetVisibility(private val bdnFun: ActivitySearchingBinding) {
     ) {
         if (response != null && response.code() == 200) {
             if (trackList != null && trackList.isNotEmpty()) {
-                showViews(bdnFun.rcViewSearching)
+                showViews(binding.rcViewSearching)
                 response.body()?.results?.let { trackList.addAll(it) }
                 trackAdapter?.notifyDataSetChanged()
             } else {
-                showViews(bdnFun.iwNoResultLayout)
+                showViews(binding.iwNoResultLayout)
             }
-        } else if (response != null && response.code() == 400) {
-            showViews(bdnFun.iwNoConnectionLayout)
         } else {
-            showViews(bdnFun.rlProgressBar)
+            showViews(binding.iwNoConnectionLayout)
         }
     }
 
     private fun showViews(vararg views: View) {
-        bdnFun.rcViewSearching.visibility = View.GONE
-        bdnFun.clSearchHistory.visibility = View.GONE
-        bdnFun.iwNoResultLayout.visibility = View.GONE
-        bdnFun.iwNoConnectionLayout.visibility = View.GONE
-        bdnFun.rlProgressBar.visibility = View.GONE
+        binding.rcViewSearching.visibility = View.GONE
+        binding.clSearchHistory.visibility = View.GONE
+        binding.iwNoResultLayout.visibility = View.GONE
+        binding.iwNoConnectionLayout.visibility = View.GONE
+        binding.rlProgressBar.visibility = View.GONE
         for (view in views) {
             view.visibility = View.VISIBLE
         }
@@ -45,9 +50,10 @@ class SetVisibility(private val bdnFun: ActivitySearchingBinding) {
 
     fun simpleVisibility(s: Int?) {
         when (s) {
-            1 -> showViews(bdnFun.rlProgressBar)
-            2 -> showViews(bdnFun.iwNoConnectionLayout)
-            3 -> showViews(bdnFun.rcViewSearching)
+            SHOW_PROGRESSBAR -> showViews(binding.rlProgressBar)
+            SHOW_NO_CONNECTION -> showViews(binding.iwNoConnectionLayout)
+            SHOW_SEARCHING_RESULT -> showViews(binding.rcViewSearching)
+            SHOW_HISTORY_SEARCHING_RESULT -> showViews(binding.clSearchHistory)
             else -> Unit
         }
     }

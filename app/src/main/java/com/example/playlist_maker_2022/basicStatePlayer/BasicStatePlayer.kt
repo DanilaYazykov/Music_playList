@@ -25,6 +25,7 @@ class BasicStatePlayer : AppCompatActivity() {
 
     companion object {
         const val TRACK_KEY = "trackKey"
+        const val delayMillis = 300L
         private const val STATE_DEFAULT = 0
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
@@ -33,6 +34,13 @@ class BasicStatePlayer : AppCompatActivity() {
 
     private var playerState = STATE_DEFAULT
     private val handler: Handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = object : Runnable {
+        override fun run() {
+            binding.tvCurrentTimeTrack.text =
+                SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+            handler.postDelayed(this, delayMillis)
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,9 +49,12 @@ class BasicStatePlayer : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.backFromPlayer.setOnClickListener { finish() }
-//      val trackJson = intent.getStringExtra(TRACK_KEY)
-//      val track = Gson().fromJson(trackJson, Track::class.java)
-        @Suppress("DEPRECATION") val track = intent.getParcelableExtra<Track>(TRACK_KEY)
+        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+           intent.getParcelableExtra(TRACK_KEY, Track::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra(TRACK_KEY)
+        }
 
         binding.tvNameOfSong.text = track?.trackName
         binding.tvNameOfGroup.text = track?.artistName
@@ -72,14 +83,6 @@ class BasicStatePlayer : AppCompatActivity() {
         }
     }
 
-    private val searchRunnable = object : Runnable {
-        override fun run() {
-            binding.tvCurrentTimeTrack.text =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
-            handler.postDelayed(this, 300)
-        }
-    }
-
     private fun preparePlayer(url: String?) {
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
@@ -97,7 +100,6 @@ class BasicStatePlayer : AppCompatActivity() {
 
     private fun startPlayer() {
         mediaPlayer.start()
-        //   handler.postDelayed(searchRunnable, 300L)
         handler.post(searchRunnable)
         play.setImageResource(R.drawable.bt_stop_day)
         playerState = STATE_PLAYING

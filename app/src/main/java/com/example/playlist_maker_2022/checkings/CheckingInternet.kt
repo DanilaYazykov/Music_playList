@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import com.example.playlist_maker_2022.R
 
 @Suppress("DEPRECATION")
 class CheckingInternet {
@@ -43,13 +44,16 @@ class CheckingInternet {
         fun internetSettingsDialog(context: Context, listener: Listener) {
             val builder = AlertDialog.Builder(context)
             val dialog = builder.create()
-            dialog.setTitle("Отсутствует интернет соединение")
-            dialog.setMessage("Для корректной работы требуется подключить интернет соединение")
-            dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Ок") { _, _ ->
+            dialog.setTitle(context.getString(R.string.NoInternetConnection))
+            dialog.setMessage(context.getString(R.string.Connect_to_internet))
+            dialog.setButton(AlertDialog.BUTTON_POSITIVE, context.getString(R.string.OK)) { _, _ ->
                 listener.onClick(null)
                 dialog.dismiss()
             }
-            dialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Отмена") { _, _ ->
+            dialog.setButton(
+                AlertDialog.BUTTON_NEGATIVE,
+                context.getString(R.string.Cancel)
+            ) { _, _ ->
                 dialog.dismiss()
             }
             dialog.show()
@@ -59,6 +63,4 @@ class CheckingInternet {
             fun onClick(name: String?)
         }
     }
-
-
 }

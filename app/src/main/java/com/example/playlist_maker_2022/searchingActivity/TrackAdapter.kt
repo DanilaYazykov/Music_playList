@@ -1,9 +1,10 @@
-package com.example.playlist_maker_2022
+package com.example.playlist_maker_2022.searchingActivity
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlist_maker_2022.R
 
 class TrackAdapter(private val trackList: List<Track>, private val listener: OnTrackClickListener) :
     RecyclerView.Adapter<TrackHolder>() {
@@ -15,11 +16,11 @@ class TrackAdapter(private val trackList: List<Track>, private val listener: OnT
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(holder: TrackHolder, position: Int) {
-            val track = trackList[position]
-            holder.bind(trackList[position])
-            holder.itemView.setOnClickListener {
-                listener.onTrackClick(track)
-            }
+        val track = trackList[position]
+        holder.bind(trackList[position])
+        holder.itemView.setOnClickListener {
+            listener.onTrackClick(track)
+        }
     }
 
     override fun getItemCount(): Int = trackList.size

@@ -28,11 +28,9 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
     }
 
     override suspend fun getTrackForId(trackName: String): Pair<NetworkResult, List<Track>> {
-        println("МЫ в TracksRepositoryImpl и делаем запрос: $trackName!")
         if (trackName.isNotEmpty()) {
             val response =
                 networkClient.doRequest(RequestGetTrack(trackId = trackName)) as Pair<NetworkResult, List<Track>>
-            println("МЫ в TracksRepositoryImpl и передаем трек во вью: $response!")
             // cachedTracks[trackName] = response.second
             return response
         }

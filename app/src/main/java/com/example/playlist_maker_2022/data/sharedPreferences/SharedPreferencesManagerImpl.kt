@@ -34,9 +34,4 @@ class SharedPreferencesManagerImpl(context: Context) : SharedPreferencesManager 
             .clear()
             .apply()
     }
-
-
-
-
-    // Другие методы для работы с SharedPreferences
 }

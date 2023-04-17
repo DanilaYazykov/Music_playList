@@ -6,33 +6,12 @@ import com.example.playlist_maker_2022.domain.searching.api.TracksRepository
 import com.example.playlist_maker_2022.domain.models.Track
 
 class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
-    //  private val cachedTracks = mutableMapOf<String, List<Track>>()
-    override fun likeTrack(trackId: String) {
-/*        val response = networkClient.doRequest(RequestGetTrack(trackId = trackId)) as Track
-
-        if (response.resultCode == 1) {
-            cachedTracks[trackId]?.let { track: Track ->
-                cachedTracks[trackId] = track.copy(isLiked = false)
-            }
-        }*/
-    }
-
-    override fun unlikeTrack(trackId: String) {
-/*        val response = networkClient.doRequest(RequestGetTrack(trackId = trackId)) as Track
-
-        if (response.resultCode == 1) {
-            cachedTracks[trackId]?.let { track: Track ->
-                cachedTracks[trackId] = track.copy(isLiked = true)
-            }
-        }*/
-    }
+    override fun likeTrack(trackId: String) = Unit
+    override fun unlikeTrack(trackId: String) = Unit
 
     override suspend fun getTrackForId(trackName: String): Pair<NetworkResult, List<Track>> {
         if (trackName.isNotEmpty()) {
-            val response =
-                networkClient.doRequest(RequestGetTrack(trackId = trackName)) as Pair<NetworkResult, List<Track>>
-            // cachedTracks[trackName] = response.second
-            return response
+            return networkClient.doRequest(RequestGetTrack(trackId = trackName)) as Pair<NetworkResult, List<Track>>
         }
         return Pair(NetworkResult.NULL_REQUEST, emptyList())
     }

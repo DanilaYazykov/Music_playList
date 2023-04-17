@@ -1,11 +1,9 @@
 package com.example.playlist_maker_2022.domain.searching.impl
 
-import android.app.AlertDialog
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.domain.searching.api.CheckingInternet
 
 @Suppress("DEPRECATION")

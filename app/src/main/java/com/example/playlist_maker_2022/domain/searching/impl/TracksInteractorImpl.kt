@@ -1,5 +1,6 @@
 package com.example.playlist_maker_2022.domain.searching.impl
 
+import android.util.Log
 import com.example.playlist_maker_2022.domain.searching.api.TracksInteractor
 import com.example.playlist_maker_2022.domain.searching.api.TracksRepository
 import kotlinx.coroutines.CoroutineScope
@@ -20,12 +21,10 @@ class TracksInteractorImpl(private val repository: TracksRepository) : TracksInt
             try {
                 val track = repository.getTrackForId(trackId)
                 withContext(Dispatchers.Main) {
-                    // передаем треки обратно во вью
-                    println("Мы в TracksInteractorImpl и передаем трек обратно во вью: $track")
                     consumer.consume(track = track)
                 }
             } catch (e: java.lang.Exception) {
-                println("Ошибка $e")
+                Log.e("Exception","Ошибка $e")
             }
         }
     }

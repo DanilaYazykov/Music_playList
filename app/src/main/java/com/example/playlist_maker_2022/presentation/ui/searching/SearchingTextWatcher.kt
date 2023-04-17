@@ -2,6 +2,7 @@ package com.example.playlist_maker_2022.presentation.ui.searching
 
 import android.text.Editable
 import android.text.TextWatcher
+import com.example.playlist_maker_2022.presentation.presenters.searching.CreatorTrackPresenter
 
 class SearchingTextWatcher(private val searchingActivity: SearchingActivity) : TextWatcher {
     override fun beforeTextChanged(
@@ -9,8 +10,7 @@ class SearchingTextWatcher(private val searchingActivity: SearchingActivity) : T
         start: Int,
         count: Int,
         after: Int
-    ) {
-    }
+    ) = Unit
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         searchingActivity.text = s.toString()
@@ -18,7 +18,11 @@ class SearchingTextWatcher(private val searchingActivity: SearchingActivity) : T
         searchingActivity.trackList.clear()
         SetVisibility(searchingActivity.binding).simpleVisibility(SetVisibility.SHOW_PROGRESSBAR)
         if (s != "") {
-            searchingActivity.debounce.provideSearchDebounce(track = searchingActivity.text, view = searchingActivity)
+            CreatorTrackPresenter.provideSearchDebounce(
+                debounceInteractor = searchingActivity.debounceInteractor,
+                track = searchingActivity.text,
+                view = searchingActivity
+            )
         }
     }
 

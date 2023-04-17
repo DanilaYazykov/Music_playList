@@ -1,10 +1,10 @@
-package com.example.playlist_maker_2022.presentation.ui.settings
+package com.example.playlist_maker_2022.data.sharedPreferences
 
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
-class App : Application() {
+class ThemeStatus : Application() {
     companion object {
         var themeStatus = false
         lateinit var sharedPrefs: SharedPreferences

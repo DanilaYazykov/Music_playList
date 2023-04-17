@@ -1,6 +1,6 @@
 package com.example.playlist_maker_2022.data.network
 
-import com.example.playlist_maker_2022.data.ItunesApi2
+import com.example.playlist_maker_2022.data.ItunesApi
 import com.example.playlist_maker_2022.data.NetworkClient
 import com.example.playlist_maker_2022.data.TrackResponse
 import com.example.playlist_maker_2022.data.dto.RequestGetTrack
@@ -27,7 +27,7 @@ class NetworkClientImpl : NetworkClient {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
-            val itunesService: ItunesApi2 = retrofit.create(ItunesApi2::class.java)
+            val itunesService: ItunesApi = retrofit.create(ItunesApi::class.java)
             try {
                 val request: Response<TrackResponse> = itunesService.search(trackId)
                 when {

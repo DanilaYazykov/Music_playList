@@ -13,10 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlist_maker_2022.data.network.NetworkResult
 import com.example.playlist_maker_2022.databinding.ActivitySearchingBinding
 import com.example.playlist_maker_2022.domain.models.Track
+import com.example.playlist_maker_2022.domain.searching.api.DebounceInteractor
 import com.example.playlist_maker_2022.domain.searching.impl.DebounceInteractorImpl
+import com.example.playlist_maker_2022.presentation.presenters.NoInternetDialogManager
 import com.example.playlist_maker_2022.presentation.presenters.searching.*
 import com.example.playlist_maker_2022.presentation.presenters.sharedPreferences.SharedPreferencesPresenter
-import com.example.playlist_maker_2022.presentation.ui.player.BasicStatePlayerActivity
+import com.example.playlist_maker_2022.presentation.ui.player.PlayerActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -36,8 +38,9 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
     private lateinit var searchAdapter: TrackAdapter
     internal var trackList = ArrayList<Track>()
     internal var searchList = ArrayList<Track>()
-    internal val debounce: Debounce = DebouncePresenter(DebounceInteractorImpl())
+    internal val debounceInteractor: DebounceInteractor = DebounceInteractorImpl()
     private val presenter by lazy { CreatorTrackPresenter.providePresenter(view = this, trackId = text) }
+    private val sharedPreferencesPresenter by lazy { SharedPreferencesPresenter(applicationContext) }
 
     @SuppressLint("NotifyDataSetChanged", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +51,7 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
         binding.backFromSearching.setOnClickListener {
             finish()
         }
-        searchList.addAll(SharedPreferencesPresenter(this).getSavedTracks())
+        searchList.addAll(sharedPreferencesPresenter.getSavedTracks())
 
         binding.rVSearchHistory.layoutManager = LinearLayoutManager(this@SearchingActivity)
         searchAdapter = TrackAdapter(searchList, this)
@@ -75,10 +78,10 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
 
         binding.inputEditText.addTextChangedListener(SearchingTextWatcher(this))
         binding.inputEditText.setOnEditorActionListener { _, _, _ ->
-                if (!CheckingInternetPresenter(this).isNetworkAvailable()) {
+            if (!CreatorTrackPresenter.checkingInternetPresenter(this)) {
                 SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_NO_CONNECTION)
-                CreatorNoInternetDialogManager.internetSettingsDialog(
-                    this, object : CreatorNoInternetDialogManager.Listener {
+                NoInternetDialogManager().internetSettingsDialog(
+                    this, object : NoInternetDialogManager.Listener {
                         override fun onClick(name: String?) {
                             startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
                         }
@@ -100,7 +103,7 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
         }
 
         binding.btClearSearch.setOnClickListener {
-            SharedPreferencesPresenter(this).clearTracks()
+            sharedPreferencesPresenter.clearTracks()
             searchList.clear()
             searchAdapter.notifyDataSetChanged()
             SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_SEARCHING_RESULT)
@@ -158,14 +161,14 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
         if (searchList.size > 10) {
             searchList.removeLast()
         }
-        SharedPreferencesPresenter(this).saveTracks(searchList)
+        sharedPreferencesPresenter.saveTracks(searchList)
         CoroutineScope(Dispatchers.Main).launch {
             delay(500)
             searchAdapter.notifyDataSetChanged()
         }
-        if (debounce.provideDebounce()) {
-            val intent = Intent(this, BasicStatePlayerActivity::class.java)
-            intent.putExtra(BasicStatePlayerActivity.TRACK_KEY, track)
+        if (CreatorTrackPresenter.provideDebounce(debounceInteractor)) {
+            val intent = Intent(this, PlayerActivity::class.java)
+            intent.putExtra(PlayerActivity.TRACK_KEY, track)
             startActivity(intent)
         }
     }

@@ -1,6 +1,5 @@
 package com.example.playlist_maker_2022.presentation.ui.player
 
-import android.media.MediaPlayer
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,34 +12,24 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.databinding.ActivityBasicStatePlayerBinding
 import com.example.playlist_maker_2022.domain.models.Track
+import com.example.playlist_maker_2022.presentation.presenters.player.PlayerPresenter
+import com.example.playlist_maker_2022.presentation.presenters.player.PlayerView
 import kotlinx.android.synthetic.main.activity_basic_state_player.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class BasicStatePlayerActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity(), PlayerView {
 
     private lateinit var binding: ActivityBasicStatePlayerBinding
     private lateinit var play: ImageButton
-    private var mediaPlayer = MediaPlayer()
+    private lateinit var playerMAIN: PlayerPresenter
 
     companion object {
         const val TRACK_KEY = "trackKey"
-        const val delayMillis = 300L
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
+        const val delayMillis = 1000L
     }
 
-    private var playerState = STATE_DEFAULT
     private val handler: Handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = object : Runnable {
-        override fun run() {
-            binding.tvCurrentTimeTrack.text =
-                SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
-            handler.postDelayed(this, delayMillis)
-        }
-    }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +39,7 @@ class BasicStatePlayerActivity : AppCompatActivity() {
 
         binding.backFromPlayer.setOnClickListener { finish() }
         val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-           intent.getParcelableExtra(TRACK_KEY, Track::class.java)
+            intent.getParcelableExtra(TRACK_KEY, Track::class.java)
         } else {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra(TRACK_KEY)
@@ -77,61 +66,49 @@ class BasicStatePlayerActivity : AppCompatActivity() {
             .into(binding.imageView3)
 
         play = findViewById(R.id.ab_play)
-        preparePlayer(url)
+        playerMAIN = PlayerPresenter(
+            url = url,
+            view = this,
+            handler = handler
+        )
+        preparePlayer()
         play.setOnClickListener {
             playbackControl()
         }
     }
 
-    private fun preparePlayer(url: String?) {
-        mediaPlayer.setDataSource(url)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            play.isEnabled = true
-            playerState = STATE_PREPARED
-        }
-        mediaPlayer.setOnCompletionListener {
-            play.setImageResource(R.drawable.bt_play_day)
-            binding.tvCurrentTimeTrack.text = getString(R.string.StartTime)
-            playerState = STATE_PREPARED
-            handler.removeCallbacks(searchRunnable)
-        }
-    }
-
-    private fun startPlayer() {
-        mediaPlayer.start()
-        handler.post(searchRunnable)
-        play.setImageResource(R.drawable.bt_stop_day)
-        playerState = STATE_PLAYING
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        handler.removeCallbacks(searchRunnable)
-        play.setImageResource(R.drawable.bt_play_day)
-        playerState = STATE_PAUSED
-
+    private fun preparePlayer() {
+        play.isEnabled = true
+        playerMAIN.preparePlayer()
     }
 
     private fun playbackControl() {
-        when (playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
-        }
+        playerMAIN.playbackControl()
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        playerMAIN.pausePlayer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.release()
-        handler.removeCallbacks(searchRunnable)
+        playerMAIN.destroy()
+    }
+
+    override fun setButtonToPlay() {
+        play.setImageResource(R.drawable.bt_play_day)
+    }
+
+    override fun setButtonToPause() {
+        play.setImageResource(R.drawable.bt_stop_day)
+    }
+
+    override fun setStartTime() {
+        binding.tvCurrentTimeTrack.text = getString(R.string.StartTime)
+    }
+
+    override fun setCurrentTime() {
+        binding.tvCurrentTimeTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(playerMAIN.player.mediaPlayer.currentPosition)
     }
 }

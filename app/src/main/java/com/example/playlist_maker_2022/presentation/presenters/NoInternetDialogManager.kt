@@ -1,10 +1,10 @@
-package com.example.playlist_maker_2022.presentation.presenters.searching
+package com.example.playlist_maker_2022.presentation.presenters
 
 import android.app.AlertDialog
 import android.content.Context
 import com.example.playlist_maker_2022.R
 
-object CreatorNoInternetDialogManager {
+class NoInternetDialogManager {
     fun internetSettingsDialog(context: Context, listener: Listener) {
         val builder = AlertDialog.Builder(context)
         val dialog = builder.create()

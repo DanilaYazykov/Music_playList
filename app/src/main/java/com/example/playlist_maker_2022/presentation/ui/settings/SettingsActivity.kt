@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import com.example.playlist_maker_2022.R
+import com.example.playlist_maker_2022.data.sharedPreferences.ThemeStatus
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -20,9 +21,9 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val buttonSwitchTheme: SwitchMaterial = findViewById(R.id.switchThemeMain)
-        buttonSwitchTheme.isChecked = App.themeStatus
+        buttonSwitchTheme.isChecked = ThemeStatus.themeStatus
         buttonSwitchTheme.setOnCheckedChangeListener { _, checked ->
-            (applicationContext as App).switchTheme(checked)
+            (applicationContext as ThemeStatus).switchTheme(checked)
         }
 
         val buttonShareApplication: Button = findViewById(R.id.shareApplication)

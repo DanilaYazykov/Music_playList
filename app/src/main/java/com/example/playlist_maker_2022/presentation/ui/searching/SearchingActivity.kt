@@ -13,8 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlist_maker_2022.data.network.NetworkResult
 import com.example.playlist_maker_2022.databinding.ActivitySearchingBinding
 import com.example.playlist_maker_2022.domain.models.Track
-import com.example.playlist_maker_2022.domain.searching.api.DebounceInteractor
-import com.example.playlist_maker_2022.domain.searching.impl.DebounceInteractorImpl
 import com.example.playlist_maker_2022.presentation.presenters.NoInternetDialogManager
 import com.example.playlist_maker_2022.presentation.presenters.searching.*
 import com.example.playlist_maker_2022.presentation.presenters.sharedPreferences.SharedPreferencesPresenter
@@ -26,10 +24,6 @@ import kotlinx.coroutines.launch
 
 class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
 
-    companion object {
-        const val TEXT_SEARCH = "textSearch"
-    }
-
     internal lateinit var binding: ActivitySearchingBinding
     private var recyclerViewState: Parcelable? = null
     private var recyclerViewPosition = 0
@@ -38,7 +32,6 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
     private lateinit var searchAdapter: TrackAdapter
     internal var trackList = ArrayList<Track>()
     internal var searchList = ArrayList<Track>()
-    internal val debounceInteractor: DebounceInteractor = DebounceInteractorImpl()
     private val presenter by lazy { CreatorTrackPresenter.providePresenter(view = this, trackId = text) }
     private val sharedPreferencesPresenter by lazy { SharedPreferencesPresenter(applicationContext) }
 
@@ -166,7 +159,7 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
             delay(500)
             searchAdapter.notifyDataSetChanged()
         }
-        if (CreatorTrackPresenter.provideDebounce(debounceInteractor)) {
+        if (CreatorTrackPresenter.provideDebounce()) {
             val intent = Intent(this, PlayerActivity::class.java)
             intent.putExtra(PlayerActivity.TRACK_KEY, track)
             startActivity(intent)
@@ -193,5 +186,9 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
             }
             NetworkResult.NULL_REQUEST -> {}
         }
+    }
+
+    companion object {
+        const val TEXT_SEARCH = "textSearch"
     }
 }

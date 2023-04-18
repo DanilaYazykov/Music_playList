@@ -1,24 +1,15 @@
 package com.example.playlist_maker_2022.presentation.presenters.player
 
 import android.os.Handler
-import com.example.playlist_maker_2022.data.PlayerBasicImpl
-import com.example.playlist_maker_2022.domain.searching.impl.PlayerInteractorImpl
+import com.example.playlist_maker_2022.domain.searching.api.PlayerInteractor
 import com.example.playlist_maker_2022.presentation.ui.player.PlayerActivity
 
 class PlayerPresenter(
-    url: String?,
+    private val playerInteractor: PlayerInteractor,
     private val view: PlayerView,
     private val handler: Handler
 ) {
-    companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-    }
 
-    val player = PlayerBasicImpl(url = url)
-    private val playerInteractor = PlayerInteractorImpl(player)
     private var playerState = STATE_DEFAULT
 
     private val searchRunnable = object : Runnable {
@@ -29,11 +20,11 @@ class PlayerPresenter(
     }
 
     fun preparePlayer() {
-        player.preparePlayer()
-        player.mediaPlayer.setOnPreparedListener {
+        playerInteractor.preparePlayer()
+        playerInteractor.setOnPreparedListener {
             playerState = STATE_PREPARED
         }
-        player.mediaPlayer.setOnCompletionListener {
+        playerInteractor.setOnCompletionListener {
             view.setButtonToPlay()
             view.setStartTime()
             playerState = STATE_PREPARED
@@ -69,5 +60,16 @@ class PlayerPresenter(
     fun destroy() {
         playerInteractor.destroy()
         handler.removeCallbacks(searchRunnable)
+    }
+
+    fun getCurrentPosition(): Int {
+        return playerInteractor.getCurrentPosition()
+    }
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
     }
 }

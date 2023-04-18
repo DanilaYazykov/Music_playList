@@ -10,8 +10,10 @@ import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlist_maker_2022.R
+import com.example.playlist_maker_2022.data.PlayerBasicImpl
 import com.example.playlist_maker_2022.databinding.ActivityBasicStatePlayerBinding
 import com.example.playlist_maker_2022.domain.models.Track
+import com.example.playlist_maker_2022.domain.searching.impl.PlayerInteractorImpl
 import com.example.playlist_maker_2022.presentation.presenters.player.PlayerPresenter
 import com.example.playlist_maker_2022.presentation.presenters.player.PlayerView
 import kotlinx.android.synthetic.main.activity_basic_state_player.*
@@ -22,12 +24,8 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
 
     private lateinit var binding: ActivityBasicStatePlayerBinding
     private lateinit var play: ImageButton
-    private lateinit var playerMAIN: PlayerPresenter
+    private lateinit var player: PlayerPresenter
 
-    companion object {
-        const val TRACK_KEY = "trackKey"
-        const val delayMillis = 1000L
-    }
 
     private val handler: Handler = Handler(Looper.getMainLooper())
 
@@ -66,11 +64,9 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
             .into(binding.imageView3)
 
         play = findViewById(R.id.ab_play)
-        playerMAIN = PlayerPresenter(
-            url = url,
-            view = this,
-            handler = handler
-        )
+
+        val playerInteractor = PlayerInteractorImpl(PlayerBasicImpl(url))
+        player = PlayerPresenter(playerInteractor, this, handler)
         preparePlayer()
         play.setOnClickListener {
             playbackControl()
@@ -79,21 +75,21 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
 
     private fun preparePlayer() {
         play.isEnabled = true
-        playerMAIN.preparePlayer()
+        player.preparePlayer()
     }
 
     private fun playbackControl() {
-        playerMAIN.playbackControl()
+        player.playbackControl()
     }
 
     override fun onPause() {
         super.onPause()
-        playerMAIN.pausePlayer()
+        player.pausePlayer()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        playerMAIN.destroy()
+        player.destroy()
     }
 
     override fun setButtonToPlay() {
@@ -109,6 +105,12 @@ class PlayerActivity : AppCompatActivity(), PlayerView {
     }
 
     override fun setCurrentTime() {
-        binding.tvCurrentTimeTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(playerMAIN.player.mediaPlayer.currentPosition)
+        binding.tvCurrentTimeTrack.text =
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(player.getCurrentPosition())
+    }
+
+    companion object {
+        const val TRACK_KEY = "trackKey"
+        const val delayMillis = 1000L
     }
 }

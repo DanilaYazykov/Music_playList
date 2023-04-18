@@ -5,13 +5,6 @@ import com.example.playlist_maker_2022.databinding.ActivitySearchingBinding
 
 class SetVisibility(private val binding: ActivitySearchingBinding) {
 
-    companion object {
-        const val SHOW_PROGRESSBAR = 1
-        const val SHOW_NO_CONNECTION = 2
-        const val SHOW_SEARCHING_RESULT = 3
-        const val SHOW_HISTORY_SEARCHING_RESULT = 4
-    }
-
     private fun showViews(vararg views: View) {
         binding.rcViewSearching.visibility = View.GONE
         binding.clSearchHistory.visibility = View.GONE
@@ -35,5 +28,12 @@ class SetVisibility(private val binding: ActivitySearchingBinding) {
             SHOW_HISTORY_SEARCHING_RESULT -> showViews(binding.clSearchHistory)
             else -> Unit
         }
+    }
+
+    companion object {
+        const val SHOW_PROGRESSBAR = 1
+        const val SHOW_NO_CONNECTION = 2
+        const val SHOW_SEARCHING_RESULT = 3
+        const val SHOW_HISTORY_SEARCHING_RESULT = 4
     }
 }

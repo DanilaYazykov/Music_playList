@@ -5,14 +5,13 @@ import com.example.playlist_maker_2022.domain.searching.api.PlayerBasic
 
 class PlayerBasicImpl(private val url: String?): PlayerBasic {
 
-    var mediaPlayer = MediaPlayer()
+    private var mediaPlayer = MediaPlayer()
     private var isPrepared = false
 
-    fun preparePlayer() {
+    override fun preparePlayer() {
         isPrepared = true
         mediaPlayer.setDataSource(url)
         mediaPlayer.prepareAsync()
-        println("PlayerBasicImpl.preparePlayer мы в preparePlayer.")
     }
 
     override fun startPlayer() {
@@ -32,5 +31,17 @@ class PlayerBasicImpl(private val url: String?): PlayerBasic {
 
     override fun destroy() {
         mediaPlayer.release()
+    }
+
+    override fun getCurrentPosition(): Int {
+        return mediaPlayer.currentPosition
+    }
+
+    override fun setOnPreparedListener(listener: MediaPlayer.OnPreparedListener) {
+        mediaPlayer.setOnPreparedListener(listener)
+    }
+
+    override fun setOnCompletionListener(listener: MediaPlayer.OnCompletionListener) {
+        mediaPlayer.setOnCompletionListener(listener)
     }
 }

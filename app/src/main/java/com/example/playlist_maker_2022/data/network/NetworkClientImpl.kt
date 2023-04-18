@@ -13,10 +13,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class NetworkClientImpl : NetworkClient {
 
-    companion object {
-        const val itunesUrl = "https://itunes.apple.com"
-    }
-
     override suspend fun doRequest(dto: Any): Pair<NetworkResult, List<Track>> =
         withContext(Dispatchers.IO) {
             val trackDto = dto as RequestGetTrack
@@ -47,4 +43,7 @@ class NetworkClientImpl : NetworkClient {
                 Pair(NetworkResult.ERROR, emptyList())
             }
         }
+    companion object {
+        const val itunesUrl = "https://itunes.apple.com"
+    }
 }

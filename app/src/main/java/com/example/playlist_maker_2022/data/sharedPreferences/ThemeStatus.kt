@@ -5,10 +5,6 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
 class ThemeStatus : Application() {
-    companion object {
-        var themeStatus = false
-        lateinit var sharedPrefs: SharedPreferences
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -26,5 +22,10 @@ class ThemeStatus : Application() {
             }
         )
         sharedPrefs.edit().putBoolean("ThemeStatus", themeStatus).apply()
+    }
+
+    companion object {
+        var themeStatus = false
+        lateinit var sharedPrefs: SharedPreferences
     }
 }

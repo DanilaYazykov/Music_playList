@@ -19,7 +19,6 @@ class SearchingTextWatcher(private val searchingActivity: SearchingActivity) : T
         SetVisibility(searchingActivity.binding).simpleVisibility(SetVisibility.SHOW_PROGRESSBAR)
         if (s != "") {
             CreatorTrackPresenter.provideSearchDebounce(
-                debounceInteractor = searchingActivity.debounceInteractor,
                 track = searchingActivity.text,
                 view = searchingActivity
             )

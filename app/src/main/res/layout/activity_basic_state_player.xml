@@ -5,7 +5,7 @@
     style="@style/MainColor2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".basicStatePlayer.BasicStatePlayer">
+    tools:context=".presentation.ui.player.PlayerActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

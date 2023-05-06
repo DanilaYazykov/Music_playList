@@ -20,4 +20,16 @@ class SharedPreferencesPresenter(val context: Context) {
     fun clearTracks() {
         shared.clearTracks()
     }
+
+    fun likeTrack(tracks: Track) {
+        shared.likeTrack(tracks)
+    }
+
+    fun unlikeTrack(tracks: Track) {
+        shared.unlikeTrack(tracks)
+    }
+
+    fun getFavouritesTracks(): ArrayList<Track> {
+        return shared.getFavouritesTracks()
+    }
 }

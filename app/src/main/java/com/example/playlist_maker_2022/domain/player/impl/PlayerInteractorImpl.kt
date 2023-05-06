@@ -1,7 +1,7 @@
-package com.example.playlist_maker_2022.domain.searching.impl
+package com.example.playlist_maker_2022.domain.player.impl
 
 import android.media.MediaPlayer
-import com.example.playlist_maker_2022.domain.searching.api.PlayerBasic
+import com.example.playlist_maker_2022.domain.player.api.PlayerBasic
 import com.example.playlist_maker_2022.domain.searching.api.PlayerInteractor
 
 class PlayerInteractorImpl(private val playerBasic: PlayerBasic): PlayerInteractor {

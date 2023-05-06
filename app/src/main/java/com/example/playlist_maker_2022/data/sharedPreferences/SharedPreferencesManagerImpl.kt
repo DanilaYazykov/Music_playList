@@ -12,6 +12,9 @@ class SharedPreferencesManagerImpl(context: Context) : SharedPreferencesManager 
     private val sharedPrefs: SharedPreferences =
         context.getSharedPreferences("tracks", MODE_PRIVATE)
 
+    private val sharedFavourites: SharedPreferences =
+        context.getSharedPreferences("favourites", MODE_PRIVATE)
+
     override fun getSavedTracks(): ArrayList<Track> {
         val savedBeforeTracks = sharedPrefs.getString("searchTracks", null)
         val savedTracks = Gson().fromJson(savedBeforeTracks, Array<Track>::class.java)
@@ -32,6 +35,36 @@ class SharedPreferencesManagerImpl(context: Context) : SharedPreferencesManager 
     override fun clearTracks() {
         sharedPrefs.edit()
             .clear()
+            .apply()
+    }
+
+    override fun likeTrack(tracks: Track) {
+        changeFavorites(tracks = tracks, remove = false)
+    }
+
+    override fun unlikeTrack(tracks: Track) {
+        changeFavorites(tracks = tracks, remove = true)
+    }
+
+    override fun getFavouritesTracks(): ArrayList<Track> {
+        val savedFavouritesTracks = sharedFavourites.getString("favourites", null)
+        val favouritesTracks = Gson().fromJson(savedFavouritesTracks, Array<Track>::class.java)
+        return if (favouritesTracks != null) {
+            ArrayList(favouritesTracks.toList())
+        } else {
+            ArrayList()
+        }
+    }
+
+    private fun changeFavorites(tracks: Track, remove: Boolean) {
+        val mutableSet = getFavouritesTracks().toMutableSet()
+        if (remove) {
+            mutableSet.remove(tracks)
+        } else {
+            mutableSet.add(tracks)
+        }
+        sharedFavourites.edit()
+            .putString("favourites", Gson().toJson(mutableSet))
             .apply()
     }
 }

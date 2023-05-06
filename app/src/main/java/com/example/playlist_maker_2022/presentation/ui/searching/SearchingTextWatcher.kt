@@ -2,9 +2,16 @@ package com.example.playlist_maker_2022.presentation.ui.searching
 
 import android.text.Editable
 import android.text.TextWatcher
-import com.example.playlist_maker_2022.presentation.presenters.searching.CreatorTrackPresenter
+import com.example.playlist_maker_2022.presentation.presenters.searching.SearchViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class SearchingTextWatcher(private val searchingActivity: SearchingActivity) : TextWatcher {
+class SearchingTextWatcher(
+    private val searchingActivity: SearchingActivity,
+    private val presenterViewModel: SearchViewModel
+) : TextWatcher {
     override fun beforeTextChanged(
         s: CharSequence?,
         start: Int,
@@ -18,10 +25,7 @@ class SearchingTextWatcher(private val searchingActivity: SearchingActivity) : T
         searchingActivity.trackList.clear()
         SetVisibility(searchingActivity.binding).simpleVisibility(SetVisibility.SHOW_PROGRESSBAR)
         if (s != "") {
-            CreatorTrackPresenter.provideSearchDebounce(
-                track = searchingActivity.text,
-                view = searchingActivity
-            )
+            presenterViewModel.debounceSearch(searchingActivity.text)
         }
     }
 
@@ -29,6 +33,11 @@ class SearchingTextWatcher(private val searchingActivity: SearchingActivity) : T
         searchingActivity.binding.rlProgressBar.visibility = SetVisibility(searchingActivity.binding).buttonVisibility(s)
         if (searchingActivity.text.isBlank() && searchingActivity.searchList.isNotEmpty()) {
             SetVisibility(searchingActivity.binding).simpleVisibility(SetVisibility.SHOW_HISTORY_SEARCHING_RESULT)
+        }
+        // todo: временное решение. После реализую BroadcastReceiver с проверкой через него
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(2000)
+            presenterViewModel.isNetworkAvailable(application = searchingActivity.application)
         }
     }
 }

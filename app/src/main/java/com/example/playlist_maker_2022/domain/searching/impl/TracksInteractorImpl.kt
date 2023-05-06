@@ -10,12 +10,6 @@ import kotlinx.coroutines.withContext
 
 class TracksInteractorImpl(private val repository: TracksRepository) : TracksInteractor {
 
-    override fun likeTrack(trackId: String, consumer: TracksInteractor.TrackInfoConsumer) {
-    }
-
-    override fun unlikeTrack(trackId: String, consumer: TracksInteractor.TrackInfoConsumer) {
-    }
-
     override fun getTrackInfo(trackId: String, consumer: TracksInteractor.TrackInfoConsumer) {
         CoroutineScope(Dispatchers.IO).launch {
             try {

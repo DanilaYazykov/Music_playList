@@ -1,7 +1,7 @@
-package com.example.playlist_maker_2022.data
+package com.example.playlist_maker_2022.data.player
 
 import android.media.MediaPlayer
-import com.example.playlist_maker_2022.domain.searching.api.PlayerBasic
+import com.example.playlist_maker_2022.domain.player.api.PlayerBasic
 
 class PlayerBasicImpl(private val url: String?): PlayerBasic {
 

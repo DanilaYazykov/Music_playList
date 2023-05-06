@@ -16,4 +16,16 @@ class SharedPreferencesUseCases(private val sharedPreferencesManager: SharedPref
     fun clearTracks() {
         sharedPreferencesManager.clearTracks()
     }
+
+    fun likeTrack(tracks: Track) {
+        sharedPreferencesManager.likeTrack(tracks)
+    }
+
+    fun unlikeTrack(tracks: Track) {
+        sharedPreferencesManager.unlikeTrack(tracks)
+    }
+
+    fun getFavouritesTracks(): ArrayList<Track> {
+        return sharedPreferencesManager.getFavouritesTracks()
+    }
 }

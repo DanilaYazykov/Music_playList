@@ -8,57 +8,61 @@ import android.os.Parcelable
 import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlist_maker_2022.data.network.NetworkResult
 import com.example.playlist_maker_2022.databinding.ActivitySearchingBinding
 import com.example.playlist_maker_2022.domain.models.Track
-import com.example.playlist_maker_2022.presentation.presenters.NoInternetDialogManager
+import com.example.playlist_maker_2022.presentation.presenters.internetDialogManagerUseCase.NoInternetDialogManager
 import com.example.playlist_maker_2022.presentation.presenters.searching.*
-import com.example.playlist_maker_2022.presentation.presenters.sharedPreferences.SharedPreferencesPresenter
 import com.example.playlist_maker_2022.presentation.ui.player.PlayerActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
+class SearchingActivity : ComponentActivity(), OnTrackClickListener {
 
+    internal var text: String = ""
     internal lateinit var binding: ActivitySearchingBinding
     private var recyclerViewState: Parcelable? = null
     private var recyclerViewPosition = 0
-    internal var text: String = ""
     private lateinit var trackAdapter: TrackAdapter
     private lateinit var searchAdapter: TrackAdapter
     internal var trackList = ArrayList<Track>()
     internal var searchList = ArrayList<Track>()
-    private val presenter by lazy { CreatorTrackPresenter.providePresenter(view = this, trackId = text) }
-    private val sharedPreferencesPresenter by lazy { SharedPreferencesPresenter(applicationContext) }
+    private var isInternetDialogShown = false
+    private lateinit var presenterViewModel: SearchViewModel
 
     @SuppressLint("NotifyDataSetChanged", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        binding.backFromSearching.setOnClickListener {
-            finish()
-        }
-        searchList.addAll(sharedPreferencesPresenter.getSavedTracks())
+        binding.backFromSearching.setOnClickListener { finish() }
+        presenterViewModel = ViewModelProvider(
+            this,
+            SearchViewModelFactory(track = text, application = application)
+        )[SearchViewModel::class.java]
+        presenterViewModel.getTrackLiveData().observe(this) { track -> drawTrack(track) }
+        presenterViewModel.getSavedTracks()
 
         binding.rVSearchHistory.layoutManager = LinearLayoutManager(this@SearchingActivity)
         searchAdapter = TrackAdapter(searchList, this)
         binding.rVSearchHistory.adapter = searchAdapter
         searchAdapter.notifyDataSetChanged()
 
+        presenterViewModel.getSearchListLiveData().observe(this) { tracks ->
+            searchList.clear()
+            searchList.addAll(tracks)
+            binding.clSearchHistory.visibility =
+                if (tracks.isNotEmpty()) View.VISIBLE else View.GONE
+        }
         binding.rcViewSearching.layoutManager = LinearLayoutManager(this@SearchingActivity)
         trackAdapter = TrackAdapter(trackList, this)
         binding.rcViewSearching.adapter = trackAdapter
         trackAdapter.notifyDataSetChanged()
-
-        if (searchList.isNotEmpty()) {
-            binding.clSearchHistory.visibility = View.VISIBLE
-        }
 
         binding.clearIcon.setOnClickListener {
             binding.inputEditText.setText("")
@@ -68,21 +72,20 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
         }
-
-        binding.inputEditText.addTextChangedListener(SearchingTextWatcher(this))
-        binding.inputEditText.setOnEditorActionListener { _, _, _ ->
-            if (!CreatorTrackPresenter.checkingInternetPresenter(this)) {
+        binding.inputEditText.addTextChangedListener(SearchingTextWatcher(this, presenterViewModel))
+        presenterViewModel.getInternetLiveData().observe(this@SearchingActivity) { isInternet ->
+            if (!isInternet && !isInternetDialogShown) {
+                isInternetDialogShown = true
                 SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_NO_CONNECTION)
                 NoInternetDialogManager().internetSettingsDialog(
-                    this, object : NoInternetDialogManager.Listener {
+                    this@SearchingActivity, object : NoInternetDialogManager.Listener {
                         override fun onClick(name: String?) {
                             startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+                            isInternetDialogShown = false
                         }
                     })
             }
-            false
         }
-
         if (savedInstanceState != null) {
             text = savedInstanceState.getString(TEXT_SEARCH, "")
             @Suppress("DEPRECATION")
@@ -90,20 +93,19 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
             recyclerViewPosition = savedInstanceState.getInt("recyclerViewPosition")
             if (text.isNotEmpty()) {
                 trackList.clear()
-                presenter
+                presenterViewModel.debounceSearch(text)
                 binding.inputEditText.setText(text)
             }
         }
 
         binding.btClearSearch.setOnClickListener {
-            sharedPreferencesPresenter.clearTracks()
-            searchList.clear()
+            presenterViewModel.clearTracks()
             searchAdapter.notifyDataSetChanged()
             SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_SEARCHING_RESULT)
         }
         binding.btUpdate.setOnClickListener {
             trackList.clear()
-            presenter
+            presenterViewModel.debounceSearch(text)
             SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_PROGRESSBAR)
         }
     }
@@ -129,11 +131,6 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
         outState.putInt("recycler_position", recyclerViewPosition)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        presenter.onViewDestroyed()
-    }
-
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         text = savedInstanceState.getString(TEXT_SEARCH, "")
@@ -144,34 +141,21 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onTrackClick(track: Track) {
-        val existingTrack = searchList.find { it.trackId == track.trackId }
-        if (existingTrack != null) {
-            searchList.remove(existingTrack)
-            searchList.add(0, existingTrack)
-        } else {
-            searchList.add(0, track)
-        }
-        if (searchList.size > 10) {
-            searchList.removeLast()
-        }
-        sharedPreferencesPresenter.saveTracks(searchList)
+        presenterViewModel.onSearchTrackClicked(track)
         CoroutineScope(Dispatchers.Main).launch {
-            delay(500)
+            delay(1000)
             searchAdapter.notifyDataSetChanged()
+            trackAdapter.notifyDataSetChanged()
         }
-        if (CreatorTrackPresenter.provideDebounce()) {
-            val intent = Intent(this, PlayerActivity::class.java)
-            intent.putExtra(PlayerActivity.TRACK_KEY, track)
-            startActivity(intent)
+        if (presenterViewModel.debounceClick()) {
+            startActivity(Intent(this, PlayerActivity::class.java).apply {
+                putExtra(PlayerActivity.TRACK_KEY, track)
+            })
         }
-    }
-
-    override fun updateTrackLiked(liked: Boolean) {
-        TODO("Not yet implemented")
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun drawTrack(track: Pair<NetworkResult, List<Track>>) {
+    private fun drawTrack(track: Pair<NetworkResult, List<Track>>) {
         when (track.first) {
             NetworkResult.SUCCESS -> {
                 trackList.addAll(track.second)
@@ -184,7 +168,7 @@ class SearchingActivity : AppCompatActivity(), TrackView, OnTrackClickListener {
             NetworkResult.ERROR -> {
                 binding.iwNoConnectionLayout.visibility = View.VISIBLE
             }
-            NetworkResult.NULL_REQUEST -> {}
+            NetworkResult.NULL_REQUEST -> Unit
         }
     }
 

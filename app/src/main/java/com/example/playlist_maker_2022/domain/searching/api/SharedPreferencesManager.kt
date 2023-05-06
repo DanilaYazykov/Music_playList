@@ -7,4 +7,7 @@ interface SharedPreferencesManager {
     fun getSavedTracks(): ArrayList<Track>
     fun saveTracks(tracks: ArrayList<Track>)
     fun clearTracks()
+    fun likeTrack(tracks: Track)
+    fun unlikeTrack(tracks: Track)
+    fun getFavouritesTracks(): ArrayList<Track>
 }

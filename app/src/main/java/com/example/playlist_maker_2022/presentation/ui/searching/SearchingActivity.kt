@@ -8,32 +8,23 @@ import android.os.Parcelable
 import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlist_maker_2022.data.network.NetworkResult
 import com.example.playlist_maker_2022.databinding.ActivitySearchingBinding
 import com.example.playlist_maker_2022.domain.models.Track
-import com.example.playlist_maker_2022.presentation.presenters.internetDialogManagerUseCase.NoInternetDialogManager
+import com.example.playlist_maker_2022.presentation.util.internetDialogUtil.NoInternetDialogManager
 import com.example.playlist_maker_2022.presentation.presenters.searching.*
 import com.example.playlist_maker_2022.presentation.ui.player.PlayerActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
-class SearchingActivity : ComponentActivity(), OnTrackClickListener {
+class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
 
     internal var text: String = ""
     internal lateinit var binding: ActivitySearchingBinding
     private var recyclerViewState: Parcelable? = null
     private var recyclerViewPosition = 0
-    private lateinit var trackAdapter: TrackAdapter
-    private lateinit var searchAdapter: TrackAdapter
-    internal var trackList = ArrayList<Track>()
-    internal var searchList = ArrayList<Track>()
-    private var isInternetDialogShown = false
-    private lateinit var presenterViewModel: SearchViewModel
+    private lateinit var searchingViewModel: SearchViewModel
 
     @SuppressLint("NotifyDataSetChanged", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,47 +32,35 @@ class SearchingActivity : ComponentActivity(), OnTrackClickListener {
         binding = ActivitySearchingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.backFromSearching.setOnClickListener { finish() }
-        presenterViewModel = ViewModelProvider(
-            this,
-            SearchViewModelFactory(track = text, application = application)
-        )[SearchViewModel::class.java]
-        presenterViewModel.getTrackLiveData().observe(this) { track -> drawTrack(track) }
-        presenterViewModel.getSavedTracks()
-
-        binding.rVSearchHistory.layoutManager = LinearLayoutManager(this@SearchingActivity)
-        searchAdapter = TrackAdapter(searchList, this)
-        binding.rVSearchHistory.adapter = searchAdapter
-        searchAdapter.notifyDataSetChanged()
-
-        presenterViewModel.getSearchListLiveData().observe(this) { tracks ->
-            searchList.clear()
-            searchList.addAll(tracks)
-            binding.clSearchHistory.visibility =
-                if (tracks.isNotEmpty()) View.VISIBLE else View.GONE
+        searchingViewModel = ViewModelProvider(this, SearchViewModelFactory(track = text))[SearchViewModel::class.java]
+        searchingViewModel.getStateLiveData.observe(this) { search ->
+                val trackAdapter = TrackAdapter(search.trackList.second, this)
+                binding.rcViewSearching.layoutManager = LinearLayoutManager(this@SearchingActivity)
+                binding.rcViewSearching.adapter = trackAdapter
+                drawTrack(search.trackList)
         }
-        binding.rcViewSearching.layoutManager = LinearLayoutManager(this@SearchingActivity)
-        trackAdapter = TrackAdapter(trackList, this)
-        binding.rcViewSearching.adapter = trackAdapter
-        trackAdapter.notifyDataSetChanged()
+
+        searchingViewModel.getStateLiveData.observe(this) { history ->
+            val searchAdapter = TrackAdapter(history.searchList, this)
+            binding.rVSearchHistory.layoutManager = LinearLayoutManager(this@SearchingActivity)
+            binding.rVSearchHistory.adapter = searchAdapter
+            binding.clSearchHistory.visibility = if (history.searchList.isNotEmpty() && text.isBlank()) View.VISIBLE else View.GONE
+        }
 
         binding.clearIcon.setOnClickListener {
             binding.inputEditText.setText("")
-            trackList.clear()
-            trackAdapter.notifyDataSetChanged()
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
         }
-        binding.inputEditText.addTextChangedListener(SearchingTextWatcher(this, presenterViewModel))
-        presenterViewModel.getInternetLiveData().observe(this@SearchingActivity) { isInternet ->
-            if (!isInternet && !isInternetDialogShown) {
-                isInternetDialogShown = true
+        binding.inputEditText.addTextChangedListener(SearchingTextWatcher(this, searchingViewModel))
+        searchingViewModel.getStateLiveData.observe(this) { connection ->
+            if (!connection.internet) {
                 SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_NO_CONNECTION)
                 NoInternetDialogManager().internetSettingsDialog(
                     this@SearchingActivity, object : NoInternetDialogManager.Listener {
                         override fun onClick(name: String?) {
                             startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
-                            isInternetDialogShown = false
                         }
                     })
             }
@@ -92,21 +71,20 @@ class SearchingActivity : ComponentActivity(), OnTrackClickListener {
             recyclerViewState = savedInstanceState.getParcelable("recyclerViewState")
             recyclerViewPosition = savedInstanceState.getInt("recyclerViewPosition")
             if (text.isNotEmpty()) {
-                trackList.clear()
-                presenterViewModel.debounceSearch(text)
+                searchingViewModel.debounceSearch(text)
                 binding.inputEditText.setText(text)
             }
         }
 
         binding.btClearSearch.setOnClickListener {
-            presenterViewModel.clearTracks()
-            searchAdapter.notifyDataSetChanged()
-            SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_SEARCHING_RESULT)
+            searchingViewModel.clearTracks()
         }
         binding.btUpdate.setOnClickListener {
-            trackList.clear()
-            presenterViewModel.debounceSearch(text)
+            searchingViewModel.debounceSearch(text)
             SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_PROGRESSBAR)
+        }
+        binding.btUpdateError.setOnClickListener {
+            searchingViewModel.debounceSearch(text)
         }
     }
 
@@ -141,34 +119,20 @@ class SearchingActivity : ComponentActivity(), OnTrackClickListener {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onTrackClick(track: Track) {
-        presenterViewModel.onSearchTrackClicked(track)
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(1000)
-            searchAdapter.notifyDataSetChanged()
-            trackAdapter.notifyDataSetChanged()
-        }
-        if (presenterViewModel.debounceClick()) {
+        searchingViewModel.onSearchTrackClicked(track)
+        if (searchingViewModel.debounceClick()) {
             startActivity(Intent(this, PlayerActivity::class.java).apply {
                 putExtra(PlayerActivity.TRACK_KEY, track)
             })
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun drawTrack(track: Pair<NetworkResult, List<Track>>) {
         when (track.first) {
-            NetworkResult.SUCCESS -> {
-                trackList.addAll(track.second)
-                binding.rcViewSearching.visibility = View.VISIBLE
-                trackAdapter.notifyDataSetChanged()
-            }
-            NetworkResult.TRACKS_NOT_FOUND -> {
-                binding.iwNoResultLayout.visibility = View.VISIBLE
-            }
-            NetworkResult.ERROR -> {
-                binding.iwNoConnectionLayout.visibility = View.VISIBLE
-            }
-            NetworkResult.NULL_REQUEST -> Unit
+            NetworkResult.SUCCESS -> if (track.second.isNotEmpty()) SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_SEARCHING_RESULT)
+            NetworkResult.TRACKS_NOT_FOUND -> SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_NO_RESULT)
+            NetworkResult.ERROR -> SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_NO_CONNECTION)
+            NetworkResult.NULL_REQUEST -> SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_NOTHING)
         }
     }
 

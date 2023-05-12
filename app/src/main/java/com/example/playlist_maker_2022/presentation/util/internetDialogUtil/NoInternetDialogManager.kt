@@ -1,4 +1,4 @@
-package com.example.playlist_maker_2022.presentation.presenters.internetDialogManagerUseCase
+package com.example.playlist_maker_2022.presentation.util.internetDialogUtil
 
 import android.app.AlertDialog
 import android.content.Context

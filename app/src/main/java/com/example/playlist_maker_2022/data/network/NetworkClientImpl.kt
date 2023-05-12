@@ -1,6 +1,5 @@
 package com.example.playlist_maker_2022.data.network
 
-import android.util.Log
 import com.example.playlist_maker_2022.data.ItunesApi
 import com.example.playlist_maker_2022.data.NetworkClient
 import com.example.playlist_maker_2022.data.TrackResponse

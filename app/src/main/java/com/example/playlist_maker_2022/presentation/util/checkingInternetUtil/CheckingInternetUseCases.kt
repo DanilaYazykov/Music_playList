@@ -1,4 +1,4 @@
-package com.example.playlist_maker_2022.domain.searching.impl
+package com.example.playlist_maker_2022.presentation.util.checkingInternetUtil
 
 import android.content.Context
 import android.net.ConnectivityManager

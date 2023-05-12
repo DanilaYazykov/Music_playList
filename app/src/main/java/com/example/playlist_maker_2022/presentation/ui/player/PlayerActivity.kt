@@ -3,8 +3,8 @@ package com.example.playlist_maker_2022.presentation.ui.player
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -14,15 +14,13 @@ import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.presentation.presenters.player.PlayStatus
 import com.example.playlist_maker_2022.presentation.presenters.player.PlayerViewModel
 import com.example.playlist_maker_2022.presentation.presenters.player.PlayerViewModelFactory
-//import kotlinx.android.synthetic.main.activity_basic_state_player.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class PlayerActivity : ComponentActivity() {
+class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBasicStatePlayerBinding
-    private lateinit var player: PlayerViewModel
-    private var isFavourite = false
+    private lateinit var playerViewModel: PlayerViewModel
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,17 +35,17 @@ class PlayerActivity : ComponentActivity() {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra(TRACK_KEY)
         }
-        player = ViewModelProvider(
+        playerViewModel = ViewModelProvider(
             this,
-            PlayerViewModelFactory(track = track, application = application)
+            PlayerViewModelFactory(track = track)
         )[PlayerViewModel::class.java]
         draw(track)
         binding.abPlay.setOnClickListener {
-            player.playbackControl()
+            playerViewModel.playbackControl()
         }
 
-        player.getPlayStatusLiveData().observe(this) { playStatus ->
-            when (playStatus) {
+        playerViewModel.getPlayerStateLiveData.observe(this) { playerState ->
+            when (playerState.playStatus) {
                 is PlayStatus.Default -> {
                     binding.abPlay.setImageResource(R.drawable.bt_play_day)
                     binding.progressBar.visibility = View.VISIBLE
@@ -55,46 +53,40 @@ class PlayerActivity : ComponentActivity() {
                 is PlayStatus.Prepared -> setPlayButtonVisible()
                 is PlayStatus.Playing -> {
                     binding.abPlay.setImageResource(R.drawable.bt_stop_day)
-
+                    setPlayButtonVisible()
                 }
                 is PlayStatus.Paused -> {
                     binding.abPlay.setImageResource(R.drawable.bt_play_day)
-
+                    setPlayButtonVisible()
                 }
-                else -> Unit
             }
-        }
 
-        player.getCurrentTimeLiveData().observe(this) { currentTime ->
             binding.tvCurrentTimeTrack.text = SimpleDateFormat(
                 "mm:ss",
                 Locale.getDefault()
-            ).format(currentTime)
-        }
+            ).format(playerState.currentTime)
 
-        binding.isLikedButton.setOnClickListener {
-            isFavourite = !isFavourite
-            if (isFavourite) {
-                player.likeTrack(track!!)
-            } else {
-                player.unlikeTrack(track!!)
-            }
-        }
-
-        player.getLikedLiveData().observe(this) { isLiked ->
-            isFavourite = isLiked
-            binding.isLikedButton.setImageResource(
-                if (isFavourite) {
-                    R.drawable.bt_heart_liked
-                } else {
-                    R.drawable.bt_heart
+            binding.isLikedButton.apply {
+                setImageResource(
+                    if (playerState.liked) {
+                        R.drawable.bt_heart_liked
+                    } else {
+                        R.drawable.bt_heart
+                    }
+                )
+                setOnClickListener {
+                    if (playerState.liked) {
+                        playerViewModel.unlikeTrack(track!!)
+                    } else {
+                        playerViewModel.likeTrack(track!!)
+                    }
                 }
-            )
+            }
         }
     }
 
     private fun draw(track: Track?) {
-        player.likeControl(track!!.trackId)
+        playerViewModel.likeControl(track!!.trackId)
         binding.tvNameOfSong.text = track.trackName
         binding.tvNameOfGroup.text = track.artistName
         binding.tvNameOfAlbum.text = track.collectionName
@@ -124,7 +116,7 @@ class PlayerActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (isFinishing) player.onCleared()
+        if (isFinishing) playerViewModel.onCleared()
     }
 
     companion object {

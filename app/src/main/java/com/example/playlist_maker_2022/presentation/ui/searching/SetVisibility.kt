@@ -11,6 +11,7 @@ class SetVisibility(private val binding: ActivitySearchingBinding) {
         binding.iwNoResultLayout.visibility = View.GONE
         binding.iwNoConnectionLayout.visibility = View.GONE
         binding.rlProgressBar.visibility = View.GONE
+        binding.iwErrorLayout.visibility = View.GONE
         for (view in views) {
             view.visibility = View.VISIBLE
         }
@@ -23,9 +24,11 @@ class SetVisibility(private val binding: ActivitySearchingBinding) {
     fun simpleVisibility(s: Int?) {
         when (s) {
             SHOW_PROGRESSBAR -> showViews(binding.rlProgressBar)
-            SHOW_NO_CONNECTION -> showViews(binding.iwNoConnectionLayout)
+            SHOW_NO_CONNECTION -> showViews(binding.iwErrorLayout)
             SHOW_SEARCHING_RESULT -> showViews(binding.rcViewSearching)
             SHOW_HISTORY_SEARCHING_RESULT -> showViews(binding.clSearchHistory)
+            SHOW_NO_RESULT -> showViews(binding.iwNoResultLayout)
+            SHOW_NOTHING -> showViews()
             else -> Unit
         }
     }
@@ -35,5 +38,7 @@ class SetVisibility(private val binding: ActivitySearchingBinding) {
         const val SHOW_NO_CONNECTION = 2
         const val SHOW_SEARCHING_RESULT = 3
         const val SHOW_HISTORY_SEARCHING_RESULT = 4
+        const val SHOW_NO_RESULT = 5
+        const val SHOW_NOTHING = 6
     }
 }

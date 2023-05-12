@@ -1,35 +1,32 @@
 package com.example.playlist_maker_2022.presentation.presenters.player
 
-import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.playlist_maker_2022.domain.models.PlayerState
 import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.domain.searching.api.PlayerInteractor
-import com.example.playlist_maker_2022.presentation.presenters.sharedPreferences.SharedPreferencesPresenter
+import com.example.playlist_maker_2022.presentation.presenters.sharedPreferences.TrackStorageManagerPresenter
 
 class PlayerViewModel(
-    application: Application,
+    trackStorage: TrackStorageManagerPresenter,
     private val playerInteractor: PlayerInteractor
 ) : ViewModel() {
 
-    private var playerState = STATE_DEFAULT
-    private val playStatusLiveData = MutableLiveData<PlayStatus>(PlayStatus.Default)
-    fun getPlayStatusLiveData(): LiveData<PlayStatus> = playStatusLiveData
-    private val currentTimeLiveData = MutableLiveData<Int>()
-    fun getCurrentTimeLiveData(): LiveData<Int> = currentTimeLiveData
-    private val likedLiveData = MutableLiveData<Boolean>()
-    fun getLikedLiveData(): LiveData<Boolean> = likedLiveData
+    private var playerState: PlayStatus = PlayStatus.Default
+    private val _state = MutableLiveData(PlayerState.Default)
+    val getPlayerStateLiveData: LiveData<PlayerState> = _state
 
-    private val sharedPreference = SharedPreferencesPresenter(application.applicationContext)
+    private val sharedPreference = trackStorage
     private val handler = Handler(Looper.getMainLooper())
 
     private val updateTimeRunnable = object : Runnable {
         override fun run() {
-            if (playerState == STATE_PLAYING) {
-                currentTimeLiveData.value = playerInteractor.getCurrentPosition()
+            when (_state.value?.playStatus) {
+                PlayStatus.Playing -> _state.value = _state.value?.copy(currentTime = playerInteractor.getCurrentPosition())
+                else -> Unit
             }
             handler.postDelayed(this, DelayMillis)
         }
@@ -42,13 +39,13 @@ class PlayerViewModel(
     private fun preparePlayer() {
         playerInteractor.preparePlayer()
         playerInteractor.setOnPreparedListener {
-            playStatusLiveData.value = PlayStatus.Prepared
-            playerState = STATE_PREPARED
+            _state.value = _state.value?.copy(playStatus = PlayStatus.Prepared)
+            playerState = PlayStatus.Prepared
         }
         playerInteractor.setOnCompletionListener {
-            playStatusLiveData.value = PlayStatus.Paused
-            playerState = STATE_PREPARED
-            currentTimeLiveData.value = 0
+            _state.value = _state.value?.copy(playStatus = PlayStatus.Paused)
+            playerState = PlayStatus.Prepared
+            _state.value = _state.value?.copy(playStatus = PlayStatus.Paused, currentTime = 0)
             handler.removeCallbacks(updateTimeRunnable)
         }
     }
@@ -56,25 +53,22 @@ class PlayerViewModel(
     private fun startPlayer() {
         playerInteractor.startPlayer()
         handler.post(updateTimeRunnable)
-        playStatusLiveData.value = PlayStatus.Playing
-        playerState = STATE_PLAYING
+        _state.value = _state.value?.copy(playStatus = PlayStatus.Playing)
+        playerState = PlayStatus.Playing
     }
 
     private fun pausePlayer() {
         playerInteractor.pausePlayer()
-        playStatusLiveData.value = PlayStatus.Paused
-        playerState = STATE_PAUSED
+        _state.value = _state.value?.copy(playStatus = PlayStatus.Paused)
+        playerState = PlayStatus.Paused
         handler.removeCallbacks(updateTimeRunnable)
     }
 
     fun playbackControl() {
         when (playerState) {
-            STATE_PLAYING -> {
-                pausePlayer()
-            }
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
-            }
+            PlayStatus.Playing -> pausePlayer()
+            PlayStatus.Prepared, PlayStatus.Paused -> startPlayer()
+            else -> Unit
         }
     }
 
@@ -87,7 +81,7 @@ class PlayerViewModel(
     fun likeControl(track: String) {
         val favourites = sharedPreference.getFavouritesTracks()
         val hasFavouritesInTrack = favourites.any { favTrack -> track == favTrack.trackId }
-        likedLiveData.value = hasFavouritesInTrack
+        _state.value = _state.value?.copy(liked = hasFavouritesInTrack)
     }
 
     fun likeTrack(track: Track) {
@@ -101,10 +95,6 @@ class PlayerViewModel(
     }
 
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
         private const val DelayMillis = 1000L
     }
 }

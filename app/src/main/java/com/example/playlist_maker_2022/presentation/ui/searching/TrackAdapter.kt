@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.domain.models.Track
 
-class TrackAdapter(private val trackList: List<Track>, private val listener: OnTrackClickListener) :
+class TrackAdapter(internal var trackList: List<Track>, private val listener: OnTrackClickListener) :
     RecyclerView.Adapter<TrackHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {

@@ -32,18 +32,20 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         binding = ActivitySearchingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.backFromSearching.setOnClickListener { finish() }
+        val trackAdapter = TrackAdapter(emptyList(), this)
+        binding.rcViewSearching.layoutManager = LinearLayoutManager(this@SearchingActivity)
+        binding.rcViewSearching.adapter = trackAdapter
         searchingViewModel = ViewModelProvider(this, SearchViewModelFactory(track = text))[SearchViewModel::class.java]
         searchingViewModel.getStateLiveData.observe(this) { search ->
-                val trackAdapter = TrackAdapter(search.trackList.second, this)
-                binding.rcViewSearching.layoutManager = LinearLayoutManager(this@SearchingActivity)
-                binding.rcViewSearching.adapter = trackAdapter
-                drawTrack(search.trackList)
+            trackAdapter.trackList = search.trackList.second
+            drawTrack(search.trackList)
         }
-
+        val searchAdapter = TrackAdapter(emptyList(), this)
+        binding.rVSearchHistory.layoutManager = LinearLayoutManager(this@SearchingActivity)
+        binding.rVSearchHistory.adapter = searchAdapter
         searchingViewModel.getStateLiveData.observe(this) { history ->
-            val searchAdapter = TrackAdapter(history.searchList, this)
-            binding.rVSearchHistory.layoutManager = LinearLayoutManager(this@SearchingActivity)
-            binding.rVSearchHistory.adapter = searchAdapter
+            searchAdapter.trackList = history.searchList
+            searchAdapter.notifyDataSetChanged()
             binding.clSearchHistory.visibility = if (history.searchList.isNotEmpty() && text.isBlank()) View.VISIBLE else View.GONE
         }
 

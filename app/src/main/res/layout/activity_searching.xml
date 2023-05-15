@@ -18,7 +18,7 @@
         android:drawablePadding="28dp"
         android:gravity="top"
         android:text="@string/searching"
-        app:drawableStartCompat="@drawable/ic_arrow" />
+        app:drawableLeftCompat="@drawable/ic_arrow" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -79,6 +79,41 @@
             android:layout_gravity="center"
             android:layout_marginTop="80dp"
             android:text="@string/nothing_found" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/iw_error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:animationCache="true"
+        android:paddingBottom="160dp"
+        android:visibility="gone">
+
+        <ImageView style="@style/FlNoResult" />
+
+        <TextView
+            style="@style/MainTextViewStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="80dp"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="@string/Error"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/bt_update_error"
+            style="@style/BtReload"
+            android:layout_marginTop="140dp"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/reload"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:visibility="visible"
+            app:cornerRadius="56dp" />
+
     </FrameLayout>
 
     <FrameLayout
@@ -186,14 +221,15 @@
         android:visibility="gone"
         android:gravity="center">
 
-        <ProgressBar
+        <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/progressBar"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:visibility="visible"
             android:layout_centerInParent="true"
-            android:indeterminateTint="@color/main_screen"
-            android:visibility="visible" />
-
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading"
+            />
     </RelativeLayout>
-
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.example.playlist_maker_2022.domain.searching.api
+package com.example.playlist_maker_2022.domain.player.api
 
 import android.media.MediaPlayer
 

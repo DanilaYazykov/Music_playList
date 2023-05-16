@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlist_maker_2022.R
@@ -13,14 +12,16 @@ import com.example.playlist_maker_2022.databinding.ActivityBasicStatePlayerBindi
 import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.presentation.presenters.player.PlayStatus
 import com.example.playlist_maker_2022.presentation.presenters.player.PlayerViewModel
-import com.example.playlist_maker_2022.presentation.presenters.player.PlayerViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.*
 
 class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBasicStatePlayerBinding
-    private lateinit var playerViewModel: PlayerViewModel
+    private var track: Track? = null
+    private val playerViewModel by viewModel<PlayerViewModel>( parameters = { parametersOf(track?.previewUrl) })
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,16 +30,12 @@ class PlayerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.backFromPlayer.setOnClickListener { finish() }
-        val track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(TRACK_KEY, Track::class.java)
         } else {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra(TRACK_KEY)
         }
-        playerViewModel = ViewModelProvider(
-            this,
-            PlayerViewModelFactory(track = track)
-        )[PlayerViewModel::class.java]
         draw(track)
         binding.abPlay.setOnClickListener {
             playerViewModel.playbackControl()
@@ -99,7 +96,6 @@ class PlayerActivity : AppCompatActivity() {
         binding.tvCountryName.text = track.country
         binding.tvCurrentTimeTrack.text = getString(R.string.StartTime)
 
-        @Suppress("DEPRECATION")
         Glide.with(this)
             .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
             .placeholder(R.drawable.no_reply)

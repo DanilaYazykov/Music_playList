@@ -4,12 +4,15 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
-class ThemeStatus : Application() {
+class ThemeStatus(private var sharedPrefs: SharedPreferences) : Application() {
 
     override fun onCreate() {
         super.onCreate()
         sharedPrefs = getSharedPreferences("theme", MODE_PRIVATE)
         switchTheme(sharedPrefs.getBoolean("ThemeStatus", false))
+    }
+    init {
+        themeStatus = sharedPrefs.getBoolean("ThemeStatus", false)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
@@ -26,6 +29,5 @@ class ThemeStatus : Application() {
 
     companion object {
         var themeStatus = false
-        lateinit var sharedPrefs: SharedPreferences
     }
 }

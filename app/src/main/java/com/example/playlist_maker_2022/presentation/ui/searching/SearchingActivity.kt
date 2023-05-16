@@ -9,7 +9,6 @@ import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlist_maker_2022.data.network.NetworkResult
 import com.example.playlist_maker_2022.databinding.ActivitySearchingBinding
@@ -17,6 +16,8 @@ import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.presentation.util.internetDialogUtil.NoInternetDialogManager
 import com.example.playlist_maker_2022.presentation.presenters.searching.*
 import com.example.playlist_maker_2022.presentation.ui.player.PlayerActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
 
@@ -24,7 +25,7 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
     internal lateinit var binding: ActivitySearchingBinding
     private var recyclerViewState: Parcelable? = null
     private var recyclerViewPosition = 0
-    private lateinit var searchingViewModel: SearchViewModel
+    private val searchingViewModel by viewModel <SearchViewModel> { parametersOf(text) }
 
     @SuppressLint("NotifyDataSetChanged", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +36,10 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         val trackAdapter = TrackAdapter(emptyList(), this)
         binding.rcViewSearching.layoutManager = LinearLayoutManager(this@SearchingActivity)
         binding.rcViewSearching.adapter = trackAdapter
-        searchingViewModel = ViewModelProvider(this, SearchViewModelFactory(track = text))[SearchViewModel::class.java]
         searchingViewModel.getStateLiveData.observe(this) { search ->
             trackAdapter.trackList = search.trackList.second
             drawTrack(search.trackList)
+            trackAdapter.notifyDataSetChanged()
         }
         val searchAdapter = TrackAdapter(emptyList(), this)
         binding.rVSearchHistory.layoutManager = LinearLayoutManager(this@SearchingActivity)
@@ -87,6 +88,7 @@ class SearchingActivity : AppCompatActivity(), OnTrackClickListener {
         }
         binding.btUpdateError.setOnClickListener {
             searchingViewModel.debounceSearch(text)
+            SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_PROGRESSBAR)
         }
     }
 

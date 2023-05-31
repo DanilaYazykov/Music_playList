@@ -5,7 +5,6 @@ import android.os.Looper
 import com.example.playlist_maker_2022.data.network.NetworkResult
 import com.example.playlist_maker_2022.domain.searching.api.TracksInteractor
 import com.example.playlist_maker_2022.domain.models.Track
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.playlist_maker_2022.domain.models.SearchState
 import com.example.playlist_maker_2022.presentation.presenters.sharedPreferences.TrackStorageManagerPresenter
@@ -31,8 +30,6 @@ class SearchViewModel(
 
     init {
         getSavedTracks()
-        Log.e("AAA", "init getSavedTracks() SearchViewModel")
-        Log.e("AAA", "statelivedata в INIT = ${_stateLiveData.value}")
     }
     fun clearTracks() {
         sharedPreference.clearTracks()
@@ -76,10 +73,8 @@ class SearchViewModel(
             val newTrackList =
                 track.second.sortedWith(compareByDescending { favourites.contains(it) })
             _stateLiveData.value = _stateLiveData.value?.copy(trackList = track.copy(second = newTrackList))
-            Log.e("AAA", "updateFavouritesTracks: ${track.second}")
         } else {
             _stateLiveData.value = _stateLiveData.value?.copy(trackList = track)
-            Log.e("AAA", "updateFavouritesTracks: ${track.second}")
         }
     }
 

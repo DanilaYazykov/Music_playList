@@ -1,19 +1,14 @@
 package com.example.playlist_maker_2022.data.sharedPreferences
 
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.domain.searching.api.TrackStorageManager
 import com.google.gson.Gson
 
-class TrackStorageManagerImpl(context: Context) : TrackStorageManager {
-
-    private val sharedPrefs: SharedPreferences =
-        context.getSharedPreferences(TRACKS_PREFS, MODE_PRIVATE)
-
-    private val sharedFavourites: SharedPreferences =
-        context.getSharedPreferences(FAVOURITES_PREFS, MODE_PRIVATE)
+class TrackStorageManagerImpl(
+    private val sharedPrefs: SharedPreferences,
+    private val sharedFavourites: SharedPreferences
+) : TrackStorageManager {
 
     override fun getSavedTracks(): ArrayList<Track> {
         val savedBeforeTracks = sharedPrefs.getString("searchTracks", null)
@@ -65,7 +60,6 @@ class TrackStorageManagerImpl(context: Context) : TrackStorageManager {
     }
 
     companion object {
-        private const val TRACKS_PREFS = "tracks"
         private const val FAVOURITES_PREFS = "favourites"
     }
 }

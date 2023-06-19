@@ -4,7 +4,9 @@ import android.app.Application
 import com.example.playlist_maker_2022.data.sharedPreferences.ThemeStatus
 import com.example.playlist_maker_2022.di.dataModule
 import com.example.playlist_maker_2022.di.domainModule
+import com.example.playlist_maker_2022.di.favouriteSongFragmentViewModel
 import com.example.playlist_maker_2022.di.playerViewModel
+import com.example.playlist_maker_2022.di.playlistMediaFragmentViewModel
 import com.example.playlist_maker_2022.di.searchingViewModel
 import com.example.playlist_maker_2022.di.settingsViewModel
 import org.koin.android.ext.android.inject
@@ -26,7 +28,17 @@ class App : Application() {
         startKoin {
             androidLogger(level = org.koin.core.logger.Level.DEBUG)
             androidContext(this@App)
-            modules(listOf(domainModule, settingsViewModel, dataModule, searchingViewModel, playerViewModel))
+            modules(
+                listOf(
+                    domainModule,
+                    settingsViewModel,
+                    dataModule,
+                    searchingViewModel,
+                    playerViewModel,
+                    favouriteSongFragmentViewModel,
+                    playlistMediaFragmentViewModel
+                )
+            )
         }
     }
 }

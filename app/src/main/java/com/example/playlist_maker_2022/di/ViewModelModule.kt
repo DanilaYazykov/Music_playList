@@ -1,5 +1,7 @@
 package com.example.playlist_maker_2022.di
 
+import com.example.playlist_maker_2022.presentation.presenters.media.favouritesSongs.FavouriteSongFragmentViewModel
+import com.example.playlist_maker_2022.presentation.presenters.media.playLists.PlaylistMediaFragmentViewModel
 import com.example.playlist_maker_2022.presentation.presenters.player.PlayerViewModel
 import com.example.playlist_maker_2022.presentation.presenters.searching.SearchViewModel
 import com.example.playlist_maker_2022.presentation.presenters.settings.SettingsViewModel
@@ -31,5 +33,20 @@ val playerViewModel = module {
             trackStorage = get(),
             playerInteractor = get()
         )
+    }
+}
+
+val favouriteSongFragmentViewModel = module {
+    viewModel<FavouriteSongFragmentViewModel> {
+        FavouriteSongFragmentViewModel(
+            trackStorage = get()
+        )
+    }
+}
+
+
+val playlistMediaFragmentViewModel = module {
+    viewModel<PlaylistMediaFragmentViewModel> {
+        PlaylistMediaFragmentViewModel()
     }
 }

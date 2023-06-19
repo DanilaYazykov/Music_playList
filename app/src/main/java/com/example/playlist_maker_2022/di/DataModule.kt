@@ -12,7 +12,10 @@ import com.example.playlist_maker_2022.domain.player.api.PlayerBasic
 import com.example.playlist_maker_2022.domain.searching.api.TracksRepository
 import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -38,12 +41,8 @@ val dataModule = module {
     single<SharedPreferences>(named("favourites")) {
         androidContext().getSharedPreferences("favourites", Context.MODE_PRIVATE)
     }
-
-    single<NetworkClient> { NetworkClientImpl(itunesService = get()) }
-    single<TracksRepository> { TracksRepositoryImpl(networkClient = get()) }
-
+    singleOf(::NetworkClientImpl).bind<NetworkClient>()
+    singleOf(::TracksRepositoryImpl).bind<TracksRepository>()
     factory { MediaPlayer() }
-    factory<PlayerBasic> {
-        PlayerBasicImpl(url = get(), mediaPlayer = get())
-    }
+    factoryOf(::PlayerBasicImpl).bind<PlayerBasic>()
 }

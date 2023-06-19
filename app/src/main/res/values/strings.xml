@@ -34,4 +34,7 @@
     <string name="StartTime">00:00</string>
     <string name="Mediateka">Медиатека</string>
     <string name="Error">Что-то пошло не так. Попробуйте обновить</string>
+    <string name="EmptyMediateka">Ваша медиатека пуста</string>
+    <string name="EmptyMediatekaPlaylist">Вы не создали\n ни одного плейлиста</string>
+    <string name="NewPlaylist">Новый плейлист</string>
 </resources>

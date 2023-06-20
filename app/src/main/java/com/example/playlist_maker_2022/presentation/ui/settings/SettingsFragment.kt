@@ -3,28 +3,30 @@ package com.example.playlist_maker_2022.presentation.ui.settings
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.example.playlist_maker_2022.R
-import com.example.playlist_maker_2022.databinding.ActivitySettingsBinding
+import com.example.playlist_maker_2022.databinding.FragmentSettingsBinding
 import com.example.playlist_maker_2022.presentation.presenters.settings.SettingsViewModel
+import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : BindingFragment<FragmentSettingsBinding>() {
 
-    private val viewModel by viewModel <SettingsViewModel>()
-    private lateinit var binding: ActivitySettingsBinding
+    private val viewModel by viewModel<SettingsViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun createBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentSettingsBinding {
+        return FragmentSettingsBinding.inflate(inflater, container, false)
+    }
 
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        binding.backFromSetting.setOnClickListener {
-            finish()
-        }
-
-        viewModel.switchThemeChecked.observe(this) { checked ->
+        viewModel.switchThemeChecked.observe(viewLifecycleOwner) { checked ->
             binding.switchThemeMain.isChecked = checked
         }
 

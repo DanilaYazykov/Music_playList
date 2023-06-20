@@ -5,7 +5,7 @@ import android.text.TextWatcher
 import com.example.playlist_maker_2022.presentation.presenters.searching.SearchViewModel
 
 class SearchingTextWatcher(
-    private val searchingActivity: SearchingActivity,
+    private val searchingFragment: SearchingFragment,
     private val presenterViewModel: SearchViewModel
 ) : TextWatcher {
     override fun beforeTextChanged(
@@ -16,18 +16,18 @@ class SearchingTextWatcher(
     ) = Unit
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        searchingActivity.text = s.toString()
-        searchingActivity.binding.clearIcon.visibility = SetVisibility(searchingActivity.binding).buttonVisibility(s)
-        SetVisibility(searchingActivity.binding).simpleVisibility(SetVisibility.SHOW_PROGRESSBAR)
+        searchingFragment.text = s.toString()
+        searchingFragment.binding.clearIcon.visibility = SetVisibility(searchingFragment.binding).buttonVisibility(s)
+        SetVisibility(searchingFragment.binding).simpleVisibility(SetVisibility.SHOW_PROGRESSBAR)
         if (s != "") {
-            presenterViewModel.debounceSearch(searchingActivity.text)
+            presenterViewModel.debounceSearch(searchingFragment.text)
         }
     }
 
     override fun afterTextChanged(s: Editable?) {
-        searchingActivity.binding.rlProgressBar.visibility = SetVisibility(searchingActivity.binding).buttonVisibility(s)
-        if (searchingActivity.text.isBlank() && presenterViewModel.getStateLiveData.value?.searchList?.isNotEmpty() == true) {
-            SetVisibility(searchingActivity.binding).simpleVisibility(SetVisibility.SHOW_HISTORY_SEARCHING_RESULT)
+        searchingFragment.binding.rlProgressBar.visibility = SetVisibility(searchingFragment.binding).buttonVisibility(s)
+        if (searchingFragment.text.isBlank() && presenterViewModel.getStateLiveData.value?.searchList?.isNotEmpty() == true) {
+            SetVisibility(searchingFragment.binding).simpleVisibility(SetVisibility.SHOW_HISTORY_SEARCHING_RESULT)
         }
         presenterViewModel.checkNetwork()
     }

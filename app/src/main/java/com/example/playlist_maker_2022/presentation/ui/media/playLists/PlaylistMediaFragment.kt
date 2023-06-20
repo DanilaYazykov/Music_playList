@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.playlist_maker_2022.databinding.FragmentMediaPlaylistBinding
 import com.example.playlist_maker_2022.presentation.presenters.media.playLists.PlaylistMediaFragmentViewModel
-import com.example.playlist_maker_2022.presentation.ui.media.BindingFragment
+import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistMediaFragment: BindingFragment<FragmentMediaPlaylistBinding>() {

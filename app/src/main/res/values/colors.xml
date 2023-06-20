@@ -13,4 +13,6 @@
     <color name="secondGrey">#AEAFB4</color>
     <color name="thumbDay">#AEAFB4</color>
     <color name="trackDay">#E6E8EB</color>
+    <color name="bottom_navigation_ripple_light">#FFFFFF</color>
+    <color name="bottom_navigation_ripple_dark">#1A1B22</color>
 </resources>

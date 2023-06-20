@@ -1,40 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mediaFragment"
+    style="@style/MainColor2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    style="@style/MainColor2"
-    tools:context=".presentation.ui.media.MediaActivity">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tw_backFromMediateka"
         style="@style/MainTextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="16dp"
-        android:drawablePadding="28dp"
-        android:gravity="top"
+        android:layout_marginStart="@dimen/big_size"
+        android:layout_marginTop="@dimen/normal_size"
+        android:layout_marginBottom="@dimen/big_size"
         android:text="@string/Mediateka"
-        app:drawableStartCompat="@drawable/ic_arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
+        style="@style/tab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabTextAppearance="@style/tab"
-        style="@style/tab"
-        />
+        app:tabTextAppearance="@style/tab" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
-        android:layout_marginTop="24dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_marginTop="24dp" />
 
 </LinearLayout>

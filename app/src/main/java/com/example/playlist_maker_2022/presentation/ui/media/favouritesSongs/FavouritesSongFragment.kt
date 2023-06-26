@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlist_maker_2022.databinding.FragmentMediaFavouritesBinding
 import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.presentation.presenters.media.favouritesSongs.FavouriteSongFragmentViewModel
-import com.example.playlist_maker_2022.presentation.ui.media.BindingFragment
+import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
 import com.example.playlist_maker_2022.presentation.ui.player.PlayerActivity
 import com.example.playlist_maker_2022.presentation.ui.searching.OnTrackClickListener
 import com.example.playlist_maker_2022.presentation.ui.searching.TrackAdapter

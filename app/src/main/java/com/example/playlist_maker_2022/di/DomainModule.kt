@@ -9,7 +9,7 @@ import com.example.playlist_maker_2022.domain.searching.api.TracksInteractor
 import com.example.playlist_maker_2022.domain.searching.impl.TrackStorageManagerInteractor
 import com.example.playlist_maker_2022.domain.searching.impl.TracksInteractorImpl
 import com.example.playlist_maker_2022.presentation.presenters.sharedPreferences.TrackStorageManagerPresenter
-import com.example.playlist_maker_2022.presentation.util.checkingInternetUtil.CheckingInternetUseCases
+import com.example.playlist_maker_2022.presentation.util.checkingInternetUtil.CheckingInternetUtil
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -24,8 +24,8 @@ val domainModule = module {
         TrackStorageManagerPresenter(context = androidContext(), shared = get())
     }
 
-    factory<Boolean> {
-        CheckingInternetUseCases().isNetworkAvailable(context = androidContext())
+    factory<CheckingInternetUtil> {
+        CheckingInternetUtil(androidContext())
     }
 
     factory<PlayerInteractor> {

@@ -2,21 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settingsFragment"
+    style="@style/MainColor2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="14dp">
+    android:paddingTop="@dimen/normal_size"
+    tools:context=".presentation.ui.settings.SettingsFragment">
 
     <TextView
         android:id="@+id/backFromSetting"
         style="@style/MainTextViewStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:drawablePadding="28dp"
+        android:layout_marginStart="@dimen/big_size"
         android:gravity="top"
-        android:text="@string/settings"
-        app:drawableStartCompat="@drawable/ic_arrow" />
+        android:text="@string/settings" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switchThemeMain"

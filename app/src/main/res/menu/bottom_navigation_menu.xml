@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/searchingFragment"
+        android:title="@string/searching"
+        android:icon="@drawable/ic_vector111"
+        />
+    <item
+        android:id="@+id/mediaFragment"
+        android:title="@string/Mediateka"
+        android:icon="@drawable/ic_vector22"
+        />
+    <item
+        android:id="@+id/settingsFragment"
+        android:title="@string/settings"
+        android:icon="@drawable/ic_vector333"
+        />
+</menu>

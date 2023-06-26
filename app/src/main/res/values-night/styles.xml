@@ -108,4 +108,13 @@
         <item name="tabTextColor">@color/white</item>
         <item name="android:background">@color/black</item>
     </style>
+
+    <style name="BottomNavigation" parent="Widget.Design.BottomNavigationView" >
+        <item name="android:background">@color/black</item>
+        <item name="itemIconTint">@drawable/bottom_navigation_icon_selector_night</item>
+        <item name="itemTextColor">@drawable/bottom_navigation_icon_selector_night</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
 </resources>

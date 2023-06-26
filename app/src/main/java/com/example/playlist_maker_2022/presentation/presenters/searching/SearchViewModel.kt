@@ -8,11 +8,12 @@ import com.example.playlist_maker_2022.domain.models.Track
 import androidx.lifecycle.*
 import com.example.playlist_maker_2022.domain.models.SearchState
 import com.example.playlist_maker_2022.presentation.presenters.sharedPreferences.TrackStorageManagerPresenter
+import com.example.playlist_maker_2022.presentation.util.checkingInternetUtil.CheckingInternetUtil
 import kotlinx.coroutines.*
 import java.lang.Runnable
 
 class SearchViewModel(
-    private var internet: Boolean,
+    private var internet: CheckingInternetUtil,
     trackStorage: TrackStorageManagerPresenter,
     private var trackId: String,
     private val tracksInteractor: TracksInteractor
@@ -78,15 +79,17 @@ class SearchViewModel(
         }
     }
 
-    fun checkNetwork() {
+    private fun checkNetwork() {
         networkCheckJob?.cancel()
         networkCheckJob = CoroutineScope(Dispatchers.Main).launch {
             delay (SEARCH_DEBOUNCE_DELAY)
-            _stateLiveData.value = _stateLiveData.value?.copy(internet = internet)
+            val result = internet.isNetworkAvailable()
+            _stateLiveData.value = _stateLiveData.value?.copy(internet = result)
         }
     }
 
     private fun searchRunnable(track: String): Runnable {
+        checkNetwork()
         return Runnable {
             trackId = track
             loadTrack()

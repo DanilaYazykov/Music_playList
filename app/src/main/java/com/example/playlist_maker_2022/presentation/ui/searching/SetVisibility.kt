@@ -1,9 +1,9 @@
 package com.example.playlist_maker_2022.presentation.ui.searching
 
 import android.view.View
-import com.example.playlist_maker_2022.databinding.ActivitySearchingBinding
+import com.example.playlist_maker_2022.databinding.FragmentSearchingBinding
 
-class SetVisibility(private val binding: ActivitySearchingBinding) {
+class SetVisibility(private val binding: FragmentSearchingBinding) {
 
     private fun showViews(vararg views: View) {
         binding.rcViewSearching.visibility = View.GONE

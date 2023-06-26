@@ -29,6 +29,5 @@ class SearchingTextWatcher(
         if (searchingFragment.text.isBlank() && presenterViewModel.getStateLiveData.value?.searchList?.isNotEmpty() == true) {
             SetVisibility(searchingFragment.binding).simpleVisibility(SetVisibility.SHOW_HISTORY_SEARCHING_RESULT)
         }
-        presenterViewModel.checkNetwork()
     }
 }

@@ -65,7 +65,7 @@ class SearchingFragment : BindingFragment<FragmentSearchingBinding>(), OnTrackCl
             }
             binding.inputEditText.addTextChangedListener(SearchingTextWatcher(this, searchingViewModel))
             searchingViewModel.getStateLiveData.observe(viewLifecycleOwner) { connection ->
-                if (!connection.internet && searchingViewModel.getStateLiveData.value?.internet == false) {
+                if (!connection.internet) {
                     SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_NO_CONNECTION)
                     NoInternetDialogManager().internetSettingsDialog(
                         requireContext(), object : NoInternetDialogManager.Listener {
@@ -124,21 +124,21 @@ class SearchingFragment : BindingFragment<FragmentSearchingBinding>(), OnTrackCl
         super.onSaveInstanceState(outState)
         outState.putString(TEXT_SEARCH, text)
         outState.putParcelable(
-            "recycler_state",
+            RECYCLER_STATE,
             binding.rcViewSearching.layoutManager?.onSaveInstanceState()
         )
         recyclerViewPosition =
             (binding.rcViewSearching.layoutManager as LinearLayoutManager?)?.findFirstCompletelyVisibleItemPosition()
                 ?: 0
-        outState.putInt("recycler_position", recyclerViewPosition)
+        outState.putInt(RECYCLER_POSITION, recyclerViewPosition)
     }
 
     private fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         if(savedInstanceState == null) return
         text = savedInstanceState.getString(TEXT_SEARCH, "")
         @Suppress("DEPRECATION")
-        recyclerViewState = savedInstanceState.getParcelable("recycler_state")
-        recyclerViewPosition = savedInstanceState.getInt("recycler_position", 0)
+        recyclerViewState = savedInstanceState.getParcelable(RECYCLER_STATE)
+        recyclerViewPosition = savedInstanceState.getInt(RECYCLER_POSITION, 0)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -153,5 +153,7 @@ class SearchingFragment : BindingFragment<FragmentSearchingBinding>(), OnTrackCl
 
     companion object {
         const val TEXT_SEARCH = "textSearch"
+        const val RECYCLER_STATE = "recycler_state"
+        const val RECYCLER_POSITION = "recycler_position"
     }
 }

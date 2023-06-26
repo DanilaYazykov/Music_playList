@@ -7,9 +7,9 @@ import android.os.Build
 import com.example.playlist_maker_2022.domain.searching.api.CheckingInternet
 
 @Suppress("DEPRECATION")
-class CheckingInternetUseCases: CheckingInternet {
+class CheckingInternetUtil(private val context: Context?): CheckingInternet {
 
-    override fun isNetworkAvailable(context: Context?): Boolean {
+    override fun isNetworkAvailable(): Boolean {
         if (context == null) return false
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

@@ -1,14 +1,17 @@
 package com.example.playlist_maker_2022.presentation.presenters.player
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlist_maker_2022.domain.models.PlayerState
 import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.domain.searching.api.PlayerInteractor
 import com.example.playlist_maker_2022.presentation.presenters.sharedPreferences.TrackStorageManagerPresenter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     trackStorage: TrackStorageManagerPresenter,
@@ -20,17 +23,7 @@ class PlayerViewModel(
     val getPlayerStateLiveData: LiveData<PlayerState> = _state
 
     private val sharedPreference = trackStorage
-    private val handler = Handler(Looper.getMainLooper())
-
-    private val updateTimeRunnable = object : Runnable {
-        override fun run() {
-            when (_state.value?.playStatus) {
-                PlayStatus.Playing -> _state.value = _state.value?.copy(currentTime = playerInteractor.getCurrentPosition())
-                else -> Unit
-            }
-            handler.postDelayed(this, DelayMillis)
-        }
-    }
+    private var updateTimeJob: Job? = null
 
     init {
         preparePlayer()
@@ -46,22 +39,38 @@ class PlayerViewModel(
             _state.value = _state.value?.copy(playStatus = PlayStatus.Paused)
             playerState = PlayStatus.Prepared
             _state.value = _state.value?.copy(playStatus = PlayStatus.Paused, currentTime = 0)
-            handler.removeCallbacks(updateTimeRunnable)
+            stopUpdatingTime()
         }
     }
 
     private fun startPlayer() {
         playerInteractor.startPlayer()
-        handler.post(updateTimeRunnable)
+        startUpdatingTime()
         _state.value = _state.value?.copy(playStatus = PlayStatus.Playing)
         playerState = PlayStatus.Playing
+    }
+
+    private fun startUpdatingTime() {
+        updateTimeJob = viewModelScope.launch(Dispatchers.Main) {
+            while (true) {
+                if (_state.value?.playStatus == PlayStatus.Playing) {
+                    _state.value = _state.value?.copy(currentTime = playerInteractor.getCurrentPosition())
+                }
+                delay(DelayMillis)
+            }
+        }
     }
 
     private fun pausePlayer() {
         playerInteractor.pausePlayer()
         _state.value = _state.value?.copy(playStatus = PlayStatus.Paused)
         playerState = PlayStatus.Paused
-        handler.removeCallbacks(updateTimeRunnable)
+        stopUpdatingTime()
+    }
+
+
+    private fun stopUpdatingTime() {
+        updateTimeJob?.cancel()
     }
 
     fun playbackControl() {
@@ -75,7 +84,7 @@ class PlayerViewModel(
     public override fun onCleared() {
         super.onCleared()
         playerInteractor.destroy()
-        handler.removeCallbacks(updateTimeRunnable)
+        stopUpdatingTime()
     }
 
     fun likeControl(track: String) {
@@ -95,7 +104,7 @@ class PlayerViewModel(
     }
 
     companion object {
-        private const val DelayMillis = 1000L
+        private const val DelayMillis = 300L
     }
 }
 

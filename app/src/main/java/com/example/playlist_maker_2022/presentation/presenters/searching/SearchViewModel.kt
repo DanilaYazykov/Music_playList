@@ -1,6 +1,5 @@
 package com.example.playlist_maker_2022.presentation.presenters.searching
 
-import android.util.Log
 import com.example.playlist_maker_2022.data.network.NetworkResult
 import com.example.playlist_maker_2022.domain.searching.api.TracksInteractor
 import com.example.playlist_maker_2022.domain.models.Track
@@ -55,17 +54,11 @@ class SearchViewModel(
         sharedPreference.saveTracks(searchList)
     }
 
-    private fun loadTrack() {/*
-        tracksInteractor.getTrackInfo(trackId, object : TracksInteractor.TrackInfoConsumer {
-            override fun consume(track: Pair<NetworkResult, List<Track>>) {
-                updateFavouritesTracks(track)
-            }
-        })*/
+    private fun loadTrack() {
         viewModelScope.launch {
             tracksInteractor
                 .getTrackInfo(trackId)
                 .collect { pair ->
-                    Log.e("AAAAA", "loadTrack: $pair")
                     updateFavouritesTracks(pair)
                 }
         }

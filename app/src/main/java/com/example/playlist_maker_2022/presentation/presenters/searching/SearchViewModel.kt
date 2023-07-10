@@ -1,7 +1,5 @@
 package com.example.playlist_maker_2022.presentation.presenters.searching
 
-import android.os.Handler
-import android.os.Looper
 import com.example.playlist_maker_2022.data.network.NetworkResult
 import com.example.playlist_maker_2022.domain.searching.api.TracksInteractor
 import com.example.playlist_maker_2022.domain.models.Track
@@ -10,7 +8,6 @@ import com.example.playlist_maker_2022.domain.models.SearchState
 import com.example.playlist_maker_2022.presentation.presenters.sharedPreferences.TrackStorageManagerPresenter
 import com.example.playlist_maker_2022.presentation.util.checkingInternetUtil.CheckingInternetUtil
 import kotlinx.coroutines.*
-import java.lang.Runnable
 
 class SearchViewModel(
     private var internet: CheckingInternetUtil,
@@ -21,8 +18,7 @@ class SearchViewModel(
 
     private var networkCheckJob: Job? = null
     private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
-    private var currentSearchRunnable: Runnable? = null
+    private var searchJob: Job? = null
 
     private var searchList = ArrayList<Track>()
     private val sharedPreference = trackStorage
@@ -59,14 +55,17 @@ class SearchViewModel(
     }
 
     private fun loadTrack() {
-        tracksInteractor.getTrackInfo(trackId, object : TracksInteractor.TrackInfoConsumer {
-            override fun consume(track: Pair<NetworkResult, List<Track>>) {
-                updateFavouritesTracks(track)
-            }
-        })
+        viewModelScope.launch {
+            tracksInteractor
+                .getTrackInfo(trackId)
+                .collect { pair ->
+                    updateFavouritesTracks(pair)
+                }
+        }
+
     }
 
-    fun updateFavouritesTracks(track: Pair<NetworkResult, List<Track>>) {
+    private fun updateFavouritesTracks(track: Pair<NetworkResult, List<Track>>) {
         val favourites = sharedPreference.getFavouritesTracks()
         val hasFavouritesInTrack =
             favourites.any { favTrack -> track.second.any { it.trackId == favTrack.trackId } }
@@ -88,30 +87,30 @@ class SearchViewModel(
         }
     }
 
-    private fun searchRunnable(track: String): Runnable {
+    private fun searchRunnable(track: String) {
         checkNetwork()
-        return Runnable {
-            trackId = track
-            loadTrack()
-        }
+        trackId = track
+        loadTrack()
     }
 
     fun debounceClick(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            viewModelScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }
 
     fun debounceSearch(track: String) {
-        currentSearchRunnable?.let {
-            handler.removeCallbacks(it)
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchRunnable(track)
         }
-        val newSearchRunnable = searchRunnable(track)
-        currentSearchRunnable = newSearchRunnable
-        handler.postDelayed(newSearchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L

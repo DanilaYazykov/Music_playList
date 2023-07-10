@@ -59,9 +59,7 @@ class SearchingFragment : BindingFragment<FragmentSearchingBinding>(), OnTrackCl
 
             binding.clearIcon.setOnClickListener {
                 binding.inputEditText.setText("")
-                val inputMethodManager =
-                    requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
+                hideKeyboard()
             }
             binding.inputEditText.addTextChangedListener(SearchingTextWatcher(this, searchingViewModel))
             searchingViewModel.getStateLiveData.observe(viewLifecycleOwner) { connection ->
@@ -101,12 +99,14 @@ class SearchingFragment : BindingFragment<FragmentSearchingBinding>(), OnTrackCl
     }
 
     private fun drawTrack(track: Pair<NetworkResult, List<Track>>) {
-        when (track.first) {
-            NetworkResult.SUCCESS -> if (track.second.isNotEmpty()) SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_SEARCHING_RESULT)
+        when (track.first) { NetworkResult.SUCCESS -> {
+                if (track.second.isNotEmpty()) SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_SEARCHING_RESULT)
+                hideKeyboard()
+            }
             NetworkResult.TRACKS_NOT_FOUND -> SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_NO_RESULT)
             NetworkResult.ERROR -> {
                 SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_NO_CONNECTION)
-
+                hideKeyboard()
             }
             NetworkResult.NULL_REQUEST -> SetVisibility(binding).simpleVisibility(SetVisibility.SHOW_NOTHING)
         }
@@ -139,6 +139,12 @@ class SearchingFragment : BindingFragment<FragmentSearchingBinding>(), OnTrackCl
         @Suppress("DEPRECATION")
         recyclerViewState = savedInstanceState.getParcelable(RECYCLER_STATE)
         recyclerViewPosition = savedInstanceState.getInt(RECYCLER_POSITION, 0)
+    }
+
+    private fun hideKeyboard() {
+        val inputMethodManager =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
     }
 
     @SuppressLint("NotifyDataSetChanged")

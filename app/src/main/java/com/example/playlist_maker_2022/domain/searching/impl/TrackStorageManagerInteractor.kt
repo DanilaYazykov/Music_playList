@@ -16,16 +16,4 @@ class TrackStorageManagerInteractor(private val sharedPreferencesManager: TrackS
     fun clearTracks() {
         sharedPreferencesManager.clearTracks()
     }
-
-    fun likeTrack(track: Track) {
-        sharedPreferencesManager.likeTrack(track)
-    }
-
-    fun unlikeTrack(track: Track) {
-        sharedPreferencesManager.unlikeTrack(track)
-    }
-
-    fun getFavouritesTracks(): ArrayList<Track> {
-        return sharedPreferencesManager.getFavouritesTracks()
-    }
 }

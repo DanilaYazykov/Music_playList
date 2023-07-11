@@ -302,11 +302,11 @@
             android:backgroundTint="@color/grey"
             android:clickable="true"
             android:focusable="true"
-            android:src="@drawable/bt_heart"
+            android:src="@drawable/bt_heart_liked"
             app:backgroundTint="@color/grey"
             app:layout_constraintBottom_toBottomOf="@+id/ab_play"
             app:layout_constraintEnd_toStartOf="@+id/rightBorder"
             app:layout_constraintTop_toTopOf="@+id/ab_play"
-            app:tint="@color/white" />
+            app:tint="@color/heart_selector_check" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -15,4 +15,6 @@
     <color name="trackDay">#E6E8EB</color>
     <color name="bottom_navigation_ripple_light">#FFFFFF</color>
     <color name="bottom_navigation_ripple_dark">#1A1B22</color>
+    <color name="heart_selector_check">@color/heart_selector</color>
+    <color name="pink">#F56B6C</color>
 </resources>

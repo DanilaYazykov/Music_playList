@@ -1,4 +1,4 @@
-package com.example.playlist_maker_2022.presentation.presenters.sharedPreferences
+package com.example.playlist_maker_2022.presentation.presenters.localStorage
 
 import android.content.Context
 import com.example.playlist_maker_2022.domain.models.Track
@@ -16,17 +16,5 @@ class TrackStorageManagerPresenter(val context: Context, private val shared: Tra
 
     fun clearTracks() {
         shared.clearTracks()
-    }
-
-    fun likeTrack(track: Track) {
-        shared.likeTrack(track)
-    }
-
-    fun unlikeTrack(track: Track) {
-        shared.unlikeTrack(track)
-    }
-
-    fun getFavouritesTracks(): ArrayList<Track> {
-        return shared.getFavouritesTracks()
     }
 }

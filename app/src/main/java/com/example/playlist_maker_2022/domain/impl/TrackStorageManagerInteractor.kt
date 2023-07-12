@@ -1,4 +1,4 @@
-package com.example.playlist_maker_2022.domain.searching.impl
+package com.example.playlist_maker_2022.domain.impl
 
 import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.domain.searching.api.TrackStorageManager

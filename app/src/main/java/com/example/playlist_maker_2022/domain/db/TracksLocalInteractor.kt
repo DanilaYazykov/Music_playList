@@ -13,4 +13,6 @@ interface TracksLocalInteractor {
 
     suspend fun deleteAllTracks()
 
+    suspend fun getTrackById(trackId: String): Flow<Track>
+
 }

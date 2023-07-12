@@ -1,4 +1,4 @@
-package com.example.playlist_maker_2022.domain.searching.impl
+package com.example.playlist_maker_2022.domain.impl
 
 import com.example.playlist_maker_2022.domain.db.TracksLocalInteractor
 import com.example.playlist_maker_2022.domain.db.TracksLocalRepository
@@ -20,5 +20,9 @@ class TracksLocalInteractorImpl(private val tracksLocalRepository: TracksLocalRe
 
     override suspend fun deleteAllTracks() {
         tracksLocalRepository.deleteAllTracks()
+    }
+
+    override suspend fun getTrackById(trackId: String): Flow<Track> {
+        return tracksLocalRepository.getTrackById(trackId)
     }
 }

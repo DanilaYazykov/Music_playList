@@ -20,7 +20,7 @@ class PlayerViewModel(
 
     private var playerState: PlayStatus = PlayStatus.Default
     private val _state = MutableLiveData(PlayerState.Default)
-    val getPlayerStateLiveData: LiveData<PlayerState> = _state
+    val playerStateLiveData: LiveData<PlayerState> = _state
     private var updateTimeJob: Job? = null
 
     init {

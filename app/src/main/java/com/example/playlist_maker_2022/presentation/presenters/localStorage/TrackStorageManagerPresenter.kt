@@ -2,7 +2,7 @@ package com.example.playlist_maker_2022.presentation.presenters.localStorage
 
 import android.content.Context
 import com.example.playlist_maker_2022.domain.models.Track
-import com.example.playlist_maker_2022.domain.searching.impl.TrackStorageManagerInteractor
+import com.example.playlist_maker_2022.domain.impl.TrackStorageManagerInteractor
 
 class TrackStorageManagerPresenter(val context: Context, private val shared: TrackStorageManagerInteractor) {
 

@@ -30,6 +30,10 @@ class TracksLocalRepositoryImpl(
         appDatabase.getTrackDao().deleteAllTracks()
     }
 
+    override suspend fun getTrackById(trackId: String): Flow<Track> = flow {
+        val track = appDatabase.getTrackDao().getTrackById(trackId)
+        emit(trackDbConverter.map(track))
+    }
     private fun convertFromTracksEntityToTracks(tracksEntity: List<TrackEntity>): List<Track> {
         return tracksEntity.map { trackEntity -> trackDbConverter.map(trackEntity) }
     }

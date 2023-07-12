@@ -1,17 +1,21 @@
 package com.example.playlist_maker_2022.data.db.dao
 
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.playlist_maker_2022.data.db.TrackEntity
 
-@androidx.room.Dao()
+@Dao
 interface TrackDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrack(tracks: TrackEntity)
 
+    /**
+     * Метод, который возвращает список избранных треков
+     */
     @Query("SELECT * FROM trackTable")
     suspend fun getFavouritesTracks(): List<TrackEntity>
 
@@ -20,5 +24,8 @@ interface TrackDao {
 
     @Query("DELETE FROM trackTable")
     suspend fun deleteAllTracks()
+
+    @Query("SELECT * FROM trackTable WHERE trackId = :trackId")
+    suspend fun getTrackById(trackId: String): TrackEntity
 
 }

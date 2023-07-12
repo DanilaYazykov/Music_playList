@@ -7,9 +7,9 @@ import com.example.playlist_maker_2022.domain.player.impl.PlayerInteractorImpl
 import com.example.playlist_maker_2022.domain.searching.api.PlayerInteractor
 import com.example.playlist_maker_2022.domain.searching.api.TrackStorageManager
 import com.example.playlist_maker_2022.domain.searching.api.TracksInteractor
-import com.example.playlist_maker_2022.domain.searching.impl.TrackStorageManagerInteractor
-import com.example.playlist_maker_2022.domain.searching.impl.TracksInteractorImpl
-import com.example.playlist_maker_2022.domain.searching.impl.TracksLocalInteractorImpl
+import com.example.playlist_maker_2022.domain.impl.TrackStorageManagerInteractor
+import com.example.playlist_maker_2022.domain.impl.TracksInteractorImpl
+import com.example.playlist_maker_2022.domain.impl.TracksLocalInteractorImpl
 import com.example.playlist_maker_2022.presentation.presenters.localStorage.TrackStorageManagerPresenter
 import com.example.playlist_maker_2022.presentation.util.checkingInternetUtil.CheckingInternetUtil
 import org.koin.android.ext.koin.androidContext

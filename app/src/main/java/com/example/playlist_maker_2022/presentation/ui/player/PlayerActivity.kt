@@ -1,7 +1,6 @@
 package com.example.playlist_maker_2022.presentation.ui.player
 
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -46,7 +45,7 @@ class PlayerActivity : AppCompatActivity() {
             playerViewModel.playbackControl()
         }
 
-        playerViewModel.getPlayerStateLiveData.observe(this) { playerState ->
+        playerViewModel.playerStateLiveData.observe(this) { playerState ->
             when (playerState.playStatus) {
                 is PlayStatus.Default -> {
                     binding.abPlay.setImageResource(R.drawable.bt_play_day)

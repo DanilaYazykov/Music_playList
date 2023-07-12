@@ -36,7 +36,7 @@ class FavouritesSongFragment : BindingFragment<FragmentMediaFavouritesBinding>()
         binding.apply {
             rcViewFavouritesSongs.layoutManager = LinearLayoutManager(requireContext())
             rcViewFavouritesSongs.adapter = trackAdapter
-            viewModel.getStateLiveData.observe(viewLifecycleOwner) { search ->
+            viewModel.stateLiveData.observe(viewLifecycleOwner) { search ->
                 @SuppressLint("NotifyDataSetChanged")
                 if (search.isNotEmpty()) {
                     rcViewFavouritesSongs.visibility = View.VISIBLE
@@ -53,9 +53,7 @@ class FavouritesSongFragment : BindingFragment<FragmentMediaFavouritesBinding>()
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch {
-            viewModel.getFavouritesTracks()
-        }
+        viewModel.getFavouritesTracks()
     }
 
     @SuppressLint("NotifyDataSetChanged")

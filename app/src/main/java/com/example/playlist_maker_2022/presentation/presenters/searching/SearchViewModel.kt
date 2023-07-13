@@ -69,12 +69,12 @@ class SearchViewModel(
     }
 
     private suspend fun updateFavouritesTracks(track: Pair<NetworkResult, List<Track>>) {
-        trackLocalStoragePresenter.getFavouritesTracks().collect { result ->
+        trackLocalStoragePresenter.getFavouritesTracksId().collect { result ->
             val hasFavouritesInTrack =
-                result.any { favTrack -> track.second.any { it.trackId == favTrack.trackId } }
+                result.any { favTrackId -> track.second.any { it.trackId == favTrackId } }
             if (hasFavouritesInTrack) {
                 val newTrackList =
-                    track.second.sortedWith(compareByDescending { result.contains(it) })
+                    track.second.sortedWith(compareByDescending { result.contains(it.trackId) })
                 _stateLiveData.value =
                     _stateLiveData.value?.copy(trackList = track.copy(second = newTrackList))
             } else {

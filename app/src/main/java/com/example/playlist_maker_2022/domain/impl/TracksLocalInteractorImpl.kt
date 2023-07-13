@@ -22,7 +22,7 @@ class TracksLocalInteractorImpl(private val tracksLocalRepository: TracksLocalRe
         tracksLocalRepository.deleteAllTracks()
     }
 
-    override suspend fun getTrackById(trackId: String): Flow<Track> {
-        return tracksLocalRepository.getTrackById(trackId)
+    override suspend fun getFavouritesTracksId(): Flow<List<String>> {
+        return tracksLocalRepository.getFavouritesTracksId()
     }
 }

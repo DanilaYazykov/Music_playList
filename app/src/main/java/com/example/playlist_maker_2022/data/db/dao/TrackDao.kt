@@ -13,9 +13,6 @@ interface TrackDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTrack(tracks: TrackEntity)
 
-    /**
-     * Метод, который возвращает список избранных треков
-     */
     @Query("SELECT * FROM trackTable")
     suspend fun getFavouritesTracks(): List<TrackEntity>
 
@@ -25,7 +22,7 @@ interface TrackDao {
     @Query("DELETE FROM trackTable")
     suspend fun deleteAllTracks()
 
-    @Query("SELECT * FROM trackTable WHERE trackId = :trackId")
-    suspend fun getTrackById(trackId: String): TrackEntity
+    @Query("SELECT trackId FROM trackTable")
+    suspend fun getFavouritesTracksId(): List<String>
 
 }

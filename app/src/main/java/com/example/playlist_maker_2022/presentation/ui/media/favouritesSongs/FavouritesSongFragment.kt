@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlist_maker_2022.databinding.FragmentMediaFavouritesBinding
 import com.example.playlist_maker_2022.domain.models.Track
@@ -14,6 +15,7 @@ import com.example.playlist_maker_2022.presentation.util.bindingFragment.Binding
 import com.example.playlist_maker_2022.presentation.ui.player.PlayerActivity
 import com.example.playlist_maker_2022.presentation.ui.searching.OnTrackClickListener
 import com.example.playlist_maker_2022.presentation.ui.searching.TrackAdapter
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavouritesSongFragment : BindingFragment<FragmentMediaFavouritesBinding>(),
@@ -34,7 +36,7 @@ class FavouritesSongFragment : BindingFragment<FragmentMediaFavouritesBinding>()
         binding.apply {
             rcViewFavouritesSongs.layoutManager = LinearLayoutManager(requireContext())
             rcViewFavouritesSongs.adapter = trackAdapter
-            viewModel.getStateLiveData.observe(viewLifecycleOwner) { search ->
+            viewModel.stateLiveData.observe(viewLifecycleOwner) { search ->
                 @SuppressLint("NotifyDataSetChanged")
                 if (search.isNotEmpty()) {
                     rcViewFavouritesSongs.visibility = View.VISIBLE

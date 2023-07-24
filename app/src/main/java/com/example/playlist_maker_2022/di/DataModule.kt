@@ -3,11 +3,16 @@ package com.example.playlist_maker_2022.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.media.MediaPlayer
+import androidx.room.Room
 import com.example.playlist_maker_2022.data.ItunesApi
 import com.example.playlist_maker_2022.data.NetworkClient
+import com.example.playlist_maker_2022.data.db.AppDatabase
+import com.example.playlist_maker_2022.data.db.TracksLocalRepositoryImpl
+import com.example.playlist_maker_2022.data.db.converters.TrackDbConverter
 import com.example.playlist_maker_2022.data.network.NetworkClientImpl
 import com.example.playlist_maker_2022.data.player.PlayerBasicImpl
 import com.example.playlist_maker_2022.data.searching.TracksRepositoryImpl
+import com.example.playlist_maker_2022.domain.db.TracksLocalRepository
 import com.example.playlist_maker_2022.domain.player.api.PlayerBasic
 import com.example.playlist_maker_2022.domain.searching.api.TracksRepository
 import com.google.gson.Gson
@@ -38,8 +43,15 @@ val dataModule = module {
     single<SharedPreferences>(named("tracks")) {
         androidContext().getSharedPreferences("tracks", Context.MODE_PRIVATE)
     }
-    single<SharedPreferences>(named("favourites")) {
-        androidContext().getSharedPreferences("favourites", Context.MODE_PRIVATE)
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
+    }
+
+    factory { TrackDbConverter() }
+
+    single<TracksLocalRepository> {
+        TracksLocalRepositoryImpl(get(), get())
     }
     singleOf(::NetworkClientImpl).bind<NetworkClient>()
     singleOf(::TracksRepositoryImpl).bind<TracksRepository>()

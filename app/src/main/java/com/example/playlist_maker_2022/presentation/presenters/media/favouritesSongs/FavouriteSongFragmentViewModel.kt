@@ -2,20 +2,26 @@ package com.example.playlist_maker_2022.presentation.presenters.media.favourites
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.playlist_maker_2022.domain.db.TracksLocalInteractor
 import com.example.playlist_maker_2022.domain.models.Track
-import com.example.playlist_maker_2022.presentation.presenters.sharedPreferences.TrackStorageManagerPresenter
+import kotlinx.coroutines.launch
 
 class FavouriteSongFragmentViewModel(
-    private val trackStorage: TrackStorageManagerPresenter,
+    private val trackLocalStoragePresenter: TracksLocalInteractor
 ) : ViewModel() {
 
     private var searchList = ArrayList<Track>()
     private val _stateLiveData = MutableLiveData(searchList)
-    val getStateLiveData = _stateLiveData
+    val stateLiveData = _stateLiveData
 
     fun getFavouritesTracks() {
         searchList.clear()
-        searchList.addAll(trackStorage.getFavouritesTracks().reversed())
-        _stateLiveData.value = searchList
+        viewModelScope.launch {
+            trackLocalStoragePresenter.getFavouritesTracks().collect {
+                searchList.addAll(it.reversed())
+                _stateLiveData.value = searchList
+            }
+        }
     }
 }

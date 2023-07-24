@@ -15,6 +15,7 @@ val searchingViewModel = module {
             trackStorage = get(),
             trackId = trackId,
             tracksInteractor = get(),
+            trackLocalStoragePresenter = get()
         )
     }
 }
@@ -30,8 +31,8 @@ val settingsViewModel = module {
 val playerViewModel = module {
     viewModel<PlayerViewModel> {
         PlayerViewModel(
-            trackStorage = get(),
-            playerInteractor = get()
+            playerInteractor = get(),
+            trackLocalStoragePresenter = get()
         )
     }
 }
@@ -39,7 +40,7 @@ val playerViewModel = module {
 val favouriteSongFragmentViewModel = module {
     viewModel<FavouriteSongFragmentViewModel> {
         FavouriteSongFragmentViewModel(
-            trackStorage = get()
+            trackLocalStoragePresenter = get()
         )
     }
 }

@@ -1,4 +1,4 @@
-package com.example.playlist_maker_2022.domain.searching.impl
+package com.example.playlist_maker_2022.domain.impl
 
 import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.domain.searching.api.TrackStorageManager
@@ -15,17 +15,5 @@ class TrackStorageManagerInteractor(private val sharedPreferencesManager: TrackS
 
     fun clearTracks() {
         sharedPreferencesManager.clearTracks()
-    }
-
-    fun likeTrack(track: Track) {
-        sharedPreferencesManager.likeTrack(track)
-    }
-
-    fun unlikeTrack(track: Track) {
-        sharedPreferencesManager.unlikeTrack(track)
-    }
-
-    fun getFavouritesTracks(): ArrayList<Track> {
-        return sharedPreferencesManager.getFavouritesTracks()
     }
 }

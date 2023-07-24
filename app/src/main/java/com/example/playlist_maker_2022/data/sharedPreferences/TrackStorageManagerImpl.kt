@@ -6,12 +6,11 @@ import com.example.playlist_maker_2022.domain.searching.api.TrackStorageManager
 import com.google.gson.Gson
 
 class TrackStorageManagerImpl(
-    private val sharedPrefs: SharedPreferences,
-    private val sharedFavourites: SharedPreferences
+    private val sharedPrefs: SharedPreferences
 ) : TrackStorageManager {
 
     override fun getSavedTracks(): ArrayList<Track> {
-        val savedBeforeTracks = sharedPrefs.getString("searchTracks", null)
+        val savedBeforeTracks = sharedPrefs.getString(SEARCH_TRACKS_PREFS, null)
         val savedTracks = Gson().fromJson(savedBeforeTracks, Array<Track>::class.java)
         return if (savedTracks != null) {
             ArrayList(savedTracks.toList())
@@ -23,7 +22,7 @@ class TrackStorageManagerImpl(
     override fun saveTracks(tracks: ArrayList<Track>) {
         val tracksJson = Gson().toJson(tracks)
         sharedPrefs.edit()
-            .putString("searchTracks", tracksJson)
+            .putString(SEARCH_TRACKS_PREFS, tracksJson)
             .apply()
     }
 
@@ -33,33 +32,7 @@ class TrackStorageManagerImpl(
             .apply()
     }
 
-    override fun likeTrack(track: Track) {
-        val mutableSet = getFavouritesTracks().toMutableSet()
-        mutableSet.add(track)
-        sharedFavourites.edit()
-            .putString(FAVOURITES_PREFS, Gson().toJson(mutableSet))
-            .apply()
-    }
-
-    override fun unlikeTrack(track: Track) {
-        val mutableSet = getFavouritesTracks().toMutableSet()
-        mutableSet.remove(track)
-        sharedFavourites.edit()
-            .putString(FAVOURITES_PREFS, Gson().toJson(mutableSet))
-            .apply()
-    }
-
-    override fun getFavouritesTracks(): ArrayList<Track> {
-        val savedFavouritesTracks = sharedFavourites.getString(FAVOURITES_PREFS, null)
-        val favouritesTracks = Gson().fromJson(savedFavouritesTracks, Array<Track>::class.java)
-        return if (favouritesTracks != null) {
-            ArrayList(favouritesTracks.toList())
-        } else {
-            ArrayList()
-        }
-    }
-
     companion object {
-        private const val FAVOURITES_PREFS = "favourites"
+        private const val SEARCH_TRACKS_PREFS = "searchTracks"
     }
 }

@@ -1,21 +1,20 @@
 package com.example.playlist_maker_2022.presentation.ui.media.favouritesSongs
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.databinding.FragmentMediaFavouritesBinding
 import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.presentation.presenters.media.favouritesSongs.FavouriteSongFragmentViewModel
 import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
-import com.example.playlist_maker_2022.presentation.ui.player.PlayerActivity
+import com.example.playlist_maker_2022.presentation.ui.player.PlayerFragment
 import com.example.playlist_maker_2022.presentation.ui.searching.OnTrackClickListener
 import com.example.playlist_maker_2022.presentation.ui.searching.TrackAdapter
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavouritesSongFragment : BindingFragment<FragmentMediaFavouritesBinding>(),
@@ -37,6 +36,8 @@ class FavouritesSongFragment : BindingFragment<FragmentMediaFavouritesBinding>()
             rcViewFavouritesSongs.layoutManager = LinearLayoutManager(requireContext())
             rcViewFavouritesSongs.adapter = trackAdapter
             viewModel.stateLiveData.observe(viewLifecycleOwner) { search ->
+
+
                 @SuppressLint("NotifyDataSetChanged")
                 if (search.isNotEmpty()) {
                     rcViewFavouritesSongs.visibility = View.VISIBLE
@@ -58,8 +59,9 @@ class FavouritesSongFragment : BindingFragment<FragmentMediaFavouritesBinding>()
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onTrackClick(track: Track) {
-        startActivity(Intent(requireContext(), PlayerActivity::class.java).apply {
-            putExtra(PlayerActivity.TRACK_KEY, track)
-        })
+        findNavController().navigate(
+            R.id.action_mediaFragment_to_playerFragment,
+            PlayerFragment.createArgs(track)
+        )
     }
 }

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/newPlaylistFragment"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    >
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    style="@style/MainColor2"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    tools:context=".presentation.ui.media.createNewPlaylist.NewPlaylistFragment">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/leftBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="24dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/rightBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="24dp" />
+
+    <TextView
+        android:id="@+id/backFromNewPlaylist"
+        style="@style/MainTextViewStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/normal_size"
+        android:drawableStart="@drawable/ic_arrow"
+        android:drawablePadding="10dp"
+        android:gravity="top"
+        android:text="@string/TextViewNewPlaylist"
+        app:layout_constraintStart_toStartOf="@+id/leftBorder"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageBox"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="82dp"
+        android:background="@drawable/rectangle"
+        android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toStartOf="@+id/rightBorder"
+        app:layout_constraintStart_toStartOf="@+id/leftBorder"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ivAddPicture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/iv_add_photo"
+        app:layout_constraintBottom_toBottomOf="@+id/imageBox"
+        app:layout_constraintEnd_toStartOf="@+id/rightBorder"
+        app:layout_constraintStart_toStartOf="@+id/leftBorder"
+        app:layout_constraintTop_toTopOf="@+id/imageBox" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tvName"
+        style="@style/PlaylistEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="8dp"
+        android:hint="@string/EditTextTitleNewPlaylist"
+        app:layout_constraintBottom_toTopOf="@id/playlist_description_playlist"
+        app:layout_constraintEnd_toStartOf="@+id/rightBorder"
+        app:layout_constraintStart_toStartOf="@+id/leftBorder"
+        app:layout_constraintTop_toBottomOf="@+id/imageBox"
+        app:layout_constraintVertical_chainStyle="packed">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/playlistName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/custom_edit"
+            android:inputType="textCapSentences"
+            android:imeOptions="actionNext"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/playlist_description_playlist"
+        style="@style/PlaylistEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="@string/EditTextDescriptionNewPlaylist"
+        app:layout_constraintEnd_toStartOf="@+id/rightBorder"
+        app:layout_constraintStart_toStartOf="@+id/leftBorder"
+        app:layout_constraintTop_toBottomOf="@id/tvName">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/playlist_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/custom_edit"
+            android:inputType="textCapSentences"
+            android:imeOptions="actionDone"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/buttonCreate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="104dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/bt_round_drawable"
+        android:fontFamily="@font/ys_display_medium"
+        android:letterSpacing="0"
+        android:text="@string/EditTextCreateNewPlaylist"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="@dimen/normal_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rightBorder"
+        app:layout_constraintStart_toStartOf="@+id/leftBorder"
+        app:layout_constraintTop_toBottomOf="@+id/playlist_description_playlist" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

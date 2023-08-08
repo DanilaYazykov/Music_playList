@@ -10,12 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.data.network.NetworkResult
 import com.example.playlist_maker_2022.databinding.FragmentSearchingBinding
 import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.presentation.presenters.searching.SearchViewModel
-import com.example.playlist_maker_2022.presentation.ui.player.PlayerActivity
+import com.example.playlist_maker_2022.presentation.ui.player.PlayerFragment
 import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
 import com.example.playlist_maker_2022.presentation.util.internetDialogUtil.NoInternetDialogManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -54,7 +56,8 @@ class SearchingFragment : BindingFragment<FragmentSearchingBinding>(), OnTrackCl
             searchingViewModel.getStateLiveData.observe(viewLifecycleOwner) { history ->
                 searchAdapter.trackList = history.searchList
                 searchAdapter.notifyDataSetChanged()
-                binding.clSearchHistory.visibility = if (history.searchList.isNotEmpty() && text.isBlank()) View.VISIBLE else View.GONE
+                binding.clSearchHistory.visibility = if (history.searchList.isNotEmpty() && text.isBlank())
+                    View.VISIBLE else View.GONE
             }
 
             binding.clearIcon.setOnClickListener {
@@ -151,9 +154,8 @@ class SearchingFragment : BindingFragment<FragmentSearchingBinding>(), OnTrackCl
     override fun onTrackClick(track: Track) {
         searchingViewModel.onSearchTrackClicked(track)
         if (searchingViewModel.debounceClick()) {
-            startActivity(Intent(requireActivity(), PlayerActivity::class.java).apply {
-                putExtra(PlayerActivity.TRACK_KEY, track)
-            })
+            findNavController().navigate(R.id.action_searchingFragment_to_playerFragment,
+                PlayerFragment.createArgs(track))
         }
     }
 

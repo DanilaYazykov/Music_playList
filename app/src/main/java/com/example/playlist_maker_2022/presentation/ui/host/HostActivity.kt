@@ -30,14 +30,12 @@ class HostActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.newPlaylistFragment, R.id.standard_bottom_sheet, R.id.playerFragment -> {
-               //     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
                     bottomNavigationView.visibility = View.GONE
                     divider.visibility = View.GONE
                 }
                 else -> {
                     bottomNavigationView.visibility = View.VISIBLE
                     divider.visibility = View.VISIBLE
-                 //   window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
                 }
             }
         }

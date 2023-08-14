@@ -5,6 +5,6 @@ data class Playlists(
     val playlistName: String,
     val playlistDescription: String?,
     val playlistImage: String?,
-    var playlistTracks: List<Track> = listOf(),
+    var playlistTracks: List<String> = listOf(),
     var playlistTracksCount: Int = 0
 )

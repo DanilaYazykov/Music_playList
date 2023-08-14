@@ -126,14 +126,18 @@ class SearchingFragment : BindingFragment<FragmentSearchingBinding>(), OnTrackCl
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(TEXT_SEARCH, text)
-        outState.putParcelable(
-            RECYCLER_STATE,
-            binding.rcViewSearching.layoutManager?.onSaveInstanceState()
-        )
-        recyclerViewPosition =
-            (binding.rcViewSearching.layoutManager as LinearLayoutManager?)?.findFirstCompletelyVisibleItemPosition()
-                ?: 0
-        outState.putInt(RECYCLER_POSITION, recyclerViewPosition)
+        try {
+            outState.putParcelable(
+                RECYCLER_STATE,
+                binding.rcViewSearching.layoutManager?.onSaveInstanceState()
+            )
+            recyclerViewPosition =
+                (binding.rcViewSearching.layoutManager as LinearLayoutManager?)?.findFirstCompletelyVisibleItemPosition()
+                    ?: 0
+            outState.putInt(RECYCLER_POSITION, recyclerViewPosition)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun onRestoreInstanceState(savedInstanceState: Bundle?) {

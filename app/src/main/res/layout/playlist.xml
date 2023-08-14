@@ -12,6 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="160dp"
         android:layout_marginTop="16dp"
+        app:cardElevation="@dimen/null_size"
         app:cardCornerRadius="8dp"
         app:cardPreventCornerOverlap="false"
         app:cardUseCompatPadding="false"
@@ -25,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/bt_heart_liked"
+            style="@style/playlistBackground"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent" />
 

@@ -11,6 +11,7 @@ import com.example.playlist_maker_2022.data.db.PlaylistsLocalRepositoryImpl
 import com.example.playlist_maker_2022.data.db.TracksLocalRepositoryImpl
 import com.example.playlist_maker_2022.data.db.converters.PlaylistsDbConverter
 import com.example.playlist_maker_2022.data.db.converters.TrackDbConverter
+import com.example.playlist_maker_2022.data.db.converters.TracksInPlaylistConverter
 import com.example.playlist_maker_2022.data.network.NetworkClientImpl
 import com.example.playlist_maker_2022.data.player.PlayerBasicImpl
 import com.example.playlist_maker_2022.data.searching.TracksRepositoryImpl
@@ -54,12 +55,13 @@ val dataModule = module {
 
     factory { TrackDbConverter() }
     factory { PlaylistsDbConverter() }
+    factory { TracksInPlaylistConverter() }
 
     single<TracksLocalRepository> {
         TracksLocalRepositoryImpl(get(), get())
     }
     single<PlaylistsLocalRepository> {
-        PlaylistsLocalRepositoryImpl(get(), get())
+        PlaylistsLocalRepositoryImpl(get(), get(), get(), get())
     }
 
     singleOf(::NetworkClientImpl).bind<NetworkClient>()

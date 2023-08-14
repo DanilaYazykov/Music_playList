@@ -3,12 +3,9 @@ package com.example.playlist_maker_2022.presentation.ui.media.createNewPlaylist
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -20,7 +17,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -29,7 +25,6 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.databinding.FragmentNewPlaylistBinding
-import com.example.playlist_maker_2022.domain.models.Playlists
 import com.example.playlist_maker_2022.presentation.presenters.media.createNewPlaylist.NewPlaylistViewModel
 import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -39,10 +34,6 @@ import com.markodevcic.peko.PermissionResult
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
-import java.io.FileOutputStream
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
 
@@ -64,9 +55,9 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         keyBoardBehavior()
+        getImageUri()
         workingWithText()
         binding.ivAddPicture.setOnClickListener { requestPermissionAndPickImage() }
-        getImageUri()
         binding.backFromNewPlaylist.setOnClickListener { exitBehavior() }
         backPressedCallback()
     }
@@ -80,19 +71,16 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
             if (text?.length!! > 0) {
                 renderBoxStrokeEditTextColor(binding.tvName, text)
                 textTitle = text.toString()
+                viewModel.setPlaylistName(textTitle)
                 binding.buttonCreate.setBackgroundResource(R.drawable.bt_round_drawable_blue)
                 binding.buttonCreate.setOnClickListener {
                     showSuccessToast()
-                    viewModel.insertPlaylist(Playlists(
-                        playlistId = 0,
-                        playlistName = textTitle,
-                        playlistDescription = textDescription,
-                        playlistImage = if (uriLink != Uri.EMPTY) uriLink.toString() else "",
-                    ))
+                    viewModel.insertPlaylist()
                     findNavController().navigateUp()
                 }
             } else {
                 textTitle = ""
+                viewModel.setPlaylistName(textTitle)
                 renderBoxStrokeEditTextColor(binding.tvName, text)
                 binding.buttonCreate.setBackgroundResource(R.drawable.bt_round_drawable)
             }
@@ -102,8 +90,10 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
             if (text?.length!! > 0) {
                 renderBoxStrokeEditTextColor(binding.playlistDescriptionPlaylist, text)
                 textDescription =  text.toString()
+                viewModel.setPlaylistDescription(textDescription)
             } else {
                 textDescription = ""
+                viewModel.setPlaylistDescription(textDescription)
                 renderBoxStrokeEditTextColor(binding.playlistDescriptionPlaylist, text)
             }
         }
@@ -193,20 +183,11 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
     }
 
     private fun saveImageToPrivateStorage(uri: Uri) {
-        if (uri == Uri.EMPTY) return
-        val filePath =
-            File(requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "myalbum")
-        if (!filePath.exists()) {
-            filePath.mkdirs()
+        viewModel.saveImageToPrivateStorage(uri)
+        viewModel.stateLiveData.observe(viewLifecycleOwner) {
+            playlistImage = it.first
+            uriLink = it.second
         }
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        playlistImage = File(filePath, "cover_$timestamp.jpg")
-        uriLink = playlistImage!!.toUri()
-        val inputStream = requireActivity().contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(playlistImage)
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
     }
 
     private fun exitBehavior() {

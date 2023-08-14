@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.playlist_maker_2022.data.db.TrackEntity
+import com.example.playlist_maker_2022.data.db.TracksInPlaylistEntities
 
 @Dao
 interface TrackDao {

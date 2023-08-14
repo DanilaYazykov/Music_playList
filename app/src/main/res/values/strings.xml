@@ -51,8 +51,16 @@
     <string name="warnDeleteOrCancel">Все несохраненные данные будут потеряны</string>
     <string name="toEnd">Завершение</string>
     <string name="playlistCreated">Плейлист %1$s создан</string>
-    <string name="oneTrack">трек</string>
-    <string name="TwoThreeFourTrack">трека</string>
-    <string name="ManyTracks">треков</string>
+        <string name="oneTrack">трек</string>
+        <string name="TwoThreeFourTrack">трека</string>
+        <string name="ManyTracks">треков</string>
     <string name="addToPlayList">Добавить в плейлист</string>
+
+    <plurals name="track_count">
+        <item quantity="one">%d трек</item>
+        <item quantity="few">%d трека</item>
+        <item quantity="many">%d треков</item>
+        <item quantity="other">%d треков</item>
+    </plurals>
+
 </resources>

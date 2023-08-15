@@ -12,8 +12,10 @@ import com.example.playlist_maker_2022.data.db.converters.TracksInPlaylistConver
 import com.example.playlist_maker_2022.domain.db.PlaylistsLocalRepository
 import com.example.playlist_maker_2022.domain.models.Playlists
 import com.example.playlist_maker_2022.domain.models.Track
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -24,7 +26,7 @@ class PlaylistsLocalRepositoryImpl(
     private val appDatabase: AppDatabase,
     private val playlistsDbConverter: PlaylistsDbConverter,
     private val tracksInPlaylistConverter: TracksInPlaylistConverter,
-    val context: Context
+    private val context: Context
 ) : PlaylistsLocalRepository {
     override suspend fun insertPlaylist(playlist: Playlists) {
         appDatabase.getPlaylistDao().insertPlaylist(playlistsDbConverter.map(playlist))
@@ -73,7 +75,7 @@ class PlaylistsLocalRepositoryImpl(
                 .decodeStream(inputStream)
                 .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
             emit(Pair(playlistImage, uriLink))
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     private fun convertFromPlaylistsEntityToPlaylists(playlistsEntity: List<PlaylistEntity>): List<Playlists> {

@@ -149,7 +149,6 @@
     <style name="BottomSheetStyle">
         <item name="android:background">@drawable/edit_round_drawable_b</item>
         <item name="android:orientation">vertical</item>
-        <item name="android:paddingHorizontal" tools:targetApi="o">16dp</item>
         <item name="behavior_hideable">true</item>
         <item name="behavior_peekHeight">300dp</item>
     </style>

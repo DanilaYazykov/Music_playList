@@ -132,7 +132,6 @@
     <style name="BottomSheetStyle">
         <item name="android:background">@drawable/edit_round_drawable</item>
         <item name="android:orientation">vertical</item>
-        <item name="android:paddingHorizontal" tools:targetApi="o">16dp</item>
         <item name="behavior_hideable">true</item>
         <item name="behavior_peekHeight">300dp</item>
     </style>
@@ -174,6 +173,38 @@
         <item name="android:padding">10dp</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="toolbar">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="navigationIcon">@drawable/ic_arrow</item>
+    </style>
+
+    <style name="text_player">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="layout_constraintHorizontal_bias">0.0</item>
+        <item name="android:textColor">@color/secondGrey</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:layout_marginTop">8dp</item>
+    </style>
+
+    <style name="text_for_recycler">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textColor">?attr/colorSecondaryVariant</item>
+        <item name="android:textSize">11sp</item>
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
 
     <style name="custom_edit" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
     <item name="boxStrokeColor">@color/textinput_box_stroke_color_selector</item>

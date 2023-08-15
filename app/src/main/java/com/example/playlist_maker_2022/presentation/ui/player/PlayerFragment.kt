@@ -25,6 +25,7 @@ import com.example.playlist_maker_2022.presentation.presenters.player.PlayStatus
 import com.example.playlist_maker_2022.presentation.presenters.player.PlayerViewModel
 import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -225,7 +226,10 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>(), OnPlayListClick
 
     override fun onPlaylistClick(playlists: Playlists) {
         playerViewModel.checkPlaylistsAndInsert(playlists, track!!)
-        showToastSuccessOrNot(getState(), playlists)
+        viewLifecycleOwner.lifecycleScope.launch {
+            delay(300)
+            showToastSuccessOrNot(getState(), playlists)
+        }
     }
 
     companion object {

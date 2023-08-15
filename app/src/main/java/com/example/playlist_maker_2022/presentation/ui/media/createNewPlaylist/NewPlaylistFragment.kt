@@ -183,11 +183,11 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
     }
 
     private fun saveImageToPrivateStorage(uri: Uri) {
-        viewModel.saveImageToPrivateStorage(uri)
         viewModel.stateLiveData.observe(viewLifecycleOwner) {
             playlistImage = it.first
             uriLink = it.second
         }
+        viewModel.saveImageToPrivateStorage(uri)
     }
 
     private fun exitBehavior() {

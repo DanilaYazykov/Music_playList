@@ -15,4 +15,10 @@
         <item name="android:statusBarColor">?attr/colorOnSecondary</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="BaseRipple" parent="Theme.Playlist_Maker_2022">
+        <item name="selectableItemBackground">@drawable/ripple</item>
+        <item name="android:colorControlHighlight">?attr/colorPrimary</item>
+    </style>
+
 </resources>

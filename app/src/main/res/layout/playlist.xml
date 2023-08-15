@@ -12,6 +12,8 @@
         android:layout_width="0dp"
         android:layout_height="160dp"
         android:layout_marginTop="16dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
         app:cardElevation="@dimen/null_size"
         app:cardCornerRadius="8dp"
         app:cardPreventCornerOverlap="false"
@@ -19,14 +21,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.9">
+        >
 
         <ImageView
             android:id="@+id/imageView"
+            style="@style/playlistBackground"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/bt_heart_liked"
-            style="@style/playlistBackground"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent" />
 

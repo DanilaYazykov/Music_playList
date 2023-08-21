@@ -5,10 +5,12 @@ import com.example.playlist_maker_2022.data.sharedPreferences.ThemeStatus
 import com.example.playlist_maker_2022.di.dataModule
 import com.example.playlist_maker_2022.di.domainModule
 import com.example.playlist_maker_2022.di.favouriteSongFragmentViewModel
+import com.example.playlist_maker_2022.di.newPlaylistViewModel
 import com.example.playlist_maker_2022.di.playerViewModel
 import com.example.playlist_maker_2022.di.playlistMediaFragmentViewModel
 import com.example.playlist_maker_2022.di.searchingViewModel
 import com.example.playlist_maker_2022.di.settingsViewModel
+import com.markodevcic.peko.PermissionRequester
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -22,6 +24,7 @@ class App : Application() {
         super.onCreate()
         initKoin()
         themeStatus.switchTheme(ThemeStatus.themeStatus)
+        PermissionRequester.initialize(applicationContext)
     }
 
     private fun initKoin() {
@@ -36,7 +39,8 @@ class App : Application() {
                     searchingViewModel,
                     playerViewModel,
                     favouriteSongFragmentViewModel,
-                    playlistMediaFragmentViewModel
+                    playlistMediaFragmentViewModel,
+                    newPlaylistViewModel
                 )
             )
         }

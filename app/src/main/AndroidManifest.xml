@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
     <application
         android:name=".presentation.presenters.app.App"
@@ -18,9 +19,6 @@
         tools:targetApi="31">
         <activity
             android:name=".data.sharedPreferences.ThemeStatus" />
-        <activity
-            android:name=".presentation.ui.player.PlayerActivity"
-            android:exported="false" />
         <activity
             android:name=".presentation.ui.host.HostActivity"
             android:windowSoftInputMode="adjustNothing"

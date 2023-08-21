@@ -2,7 +2,9 @@ package com.example.playlist_maker_2022.di
 
 import com.example.playlist_maker_2022.data.sharedPreferences.ThemeStatus
 import com.example.playlist_maker_2022.data.sharedPreferences.TrackStorageManagerImpl
+import com.example.playlist_maker_2022.domain.db.PlaylistsLocalInteractor
 import com.example.playlist_maker_2022.domain.db.TracksLocalInteractor
+import com.example.playlist_maker_2022.domain.impl.PlaylistsLocalInteractorImpl
 import com.example.playlist_maker_2022.domain.player.impl.PlayerInteractorImpl
 import com.example.playlist_maker_2022.domain.searching.api.PlayerInteractor
 import com.example.playlist_maker_2022.domain.searching.api.TrackStorageManager
@@ -44,6 +46,10 @@ val domainModule = module {
 
     single<TracksLocalInteractor> {
         TracksLocalInteractorImpl(get())
+    }
+
+    single<PlaylistsLocalInteractor> {
+        PlaylistsLocalInteractorImpl(get())
     }
 
 }

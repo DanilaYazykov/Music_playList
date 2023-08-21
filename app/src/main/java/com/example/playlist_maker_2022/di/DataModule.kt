@@ -7,11 +7,15 @@ import androidx.room.Room
 import com.example.playlist_maker_2022.data.ItunesApi
 import com.example.playlist_maker_2022.data.NetworkClient
 import com.example.playlist_maker_2022.data.db.AppDatabase
+import com.example.playlist_maker_2022.data.db.PlaylistsLocalRepositoryImpl
 import com.example.playlist_maker_2022.data.db.TracksLocalRepositoryImpl
+import com.example.playlist_maker_2022.data.db.converters.PlaylistsDbConverter
 import com.example.playlist_maker_2022.data.db.converters.TrackDbConverter
+import com.example.playlist_maker_2022.data.db.converters.TracksInPlaylistConverter
 import com.example.playlist_maker_2022.data.network.NetworkClientImpl
 import com.example.playlist_maker_2022.data.player.PlayerBasicImpl
 import com.example.playlist_maker_2022.data.searching.TracksRepositoryImpl
+import com.example.playlist_maker_2022.domain.db.PlaylistsLocalRepository
 import com.example.playlist_maker_2022.domain.db.TracksLocalRepository
 import com.example.playlist_maker_2022.domain.player.api.PlayerBasic
 import com.example.playlist_maker_2022.domain.searching.api.TracksRepository
@@ -45,14 +49,21 @@ val dataModule = module {
     }
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .fallbackToDestructiveMigration()
             .build()
     }
 
     factory { TrackDbConverter() }
+    factory { PlaylistsDbConverter() }
+    factory { TracksInPlaylistConverter() }
 
     single<TracksLocalRepository> {
         TracksLocalRepositoryImpl(get(), get())
     }
+    single<PlaylistsLocalRepository> {
+        PlaylistsLocalRepositoryImpl(get(), get(), get(), get())
+    }
+
     singleOf(::NetworkClientImpl).bind<NetworkClient>()
     singleOf(::TracksRepositoryImpl).bind<TracksRepository>()
     factory { MediaPlayer() }

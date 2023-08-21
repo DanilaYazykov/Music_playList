@@ -39,4 +39,44 @@
     <string name="NewPlaylist">Новый плейлист</string>
     <string name="favourites_media">Избранное</string>
     <string name="playlists_media">Плейлисты</string>
+    <string name="EditTextTitleNewPlaylist">Название*</string>
+    <string name="EditTextDescriptionNewPlaylist">Описание</string>
+    <string name="EditTextCreateNewPlaylist">Создать</string>
+    <string name="TextViewNewPlaylist">Новый плейлист</string>
+    <string name="dialogTitle">Запрос разрешения</string>
+    <string name="askGivePermission">Разрешение на доcтуп к файлам необходим для установки картинки плейлиста. Вы можете предоставить разрешение в настройках приложения. Предоставить разрешение?</string>
+    <string name="ok">Ок</string>
+    <string name="cancel">Отмена</string>
+    <string name="askDeleteOrCancel">Завершить создание плейлиста?</string>
+    <string name="warnDeleteOrCancel">Все несохраненные данные будут потеряны</string>
+    <string name="toEnd">Завершение</string>
+    <string name="empty">""</string>
+    <string name="play">Проигрывать песню</string>
+    <string name="playlistCreated">Плейлист %1$s создан</string>
+    <string name="oneTrack">трек</string>
+    <string name="TwoThreeFourTrack">трека</string>
+    <string name="ManyTracks">треков</string>
+    <string name="addToPlayList">Добавить в плейлист</string>
+    <string name="correct_information">Редактировать информацию</string>
+    <string name="share">Поделиться</string>
+    <string name="delete_playlist">Удалить плейлист</string>
+
+    <plurals name="minutes">
+        <item quantity="zero">%1$d минут</item>
+        <item quantity="one">%1$d минута</item>
+        <item quantity="two">%1$d минуты</item>
+        <item quantity="few">%1$d минуты</item>
+        <item quantity="many">%1$d минут</item>
+        <item quantity="other">%1$d минут</item>
+    </plurals>
+
+    <plurals name="track_count" >
+        <item quantity="zero">%1$d треков</item>
+        <item quantity="one">%1$d трек</item>
+        <item quantity="two">%1$d трека</item>
+        <item quantity="few">%1$d трека</item>
+        <item quantity="many">%1$d треков</item>
+        <item quantity="other">%1$d треков</item>
+    </plurals>
+
 </resources>

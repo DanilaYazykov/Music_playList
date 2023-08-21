@@ -3,7 +3,9 @@ package com.example.playlist_maker_2022.domain.models
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Parcelize
 data class Track(
     @SerializedName("trackId") var trackId: String,

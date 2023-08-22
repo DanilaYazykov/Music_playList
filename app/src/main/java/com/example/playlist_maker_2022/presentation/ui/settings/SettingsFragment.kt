@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.databinding.FragmentSettingsBinding
-import com.example.playlist_maker_2022.presentation.presenters.settings.SettingsViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.settings.SettingsViewModel
 import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

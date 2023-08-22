@@ -8,6 +8,14 @@ import java.io.File
 
 interface PlaylistsLocalInteractor {
 
+    suspend fun getTracksFromPlaylist(playlists: List<String>) : Flow<List<Track>>
+
+    suspend fun removeTrackFromPlaylist(playlist: Playlists, trackId: String)
+
+    suspend fun getAllTracksInPlaylists() : Flow<List<Track>>
+
+    suspend fun deleteTrack(trackId: String)
+
     suspend fun insertPlaylist(playlist: Playlists)
 
     suspend fun updatePlaylist(playlist: Playlists, track: Track)

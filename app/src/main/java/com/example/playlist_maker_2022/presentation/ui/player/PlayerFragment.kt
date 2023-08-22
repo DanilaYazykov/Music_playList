@@ -21,8 +21,8 @@ import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.databinding.FragmentPlayerBinding
 import com.example.playlist_maker_2022.domain.models.Playlists
 import com.example.playlist_maker_2022.domain.models.Track
-import com.example.playlist_maker_2022.presentation.presenters.player.PlayStatus
-import com.example.playlist_maker_2022.presentation.presenters.player.PlayerViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.player.PlayStatus
+import com.example.playlist_maker_2022.presentation.viewModels.player.PlayerViewModel
 import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.delay

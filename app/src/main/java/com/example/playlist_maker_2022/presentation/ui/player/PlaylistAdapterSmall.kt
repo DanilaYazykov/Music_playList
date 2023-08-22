@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.domain.models.Playlists
 
-class PlaylistAdapterSmall(
+open class PlaylistAdapterSmall(
     var playlists: List<Playlists>,
     val context: Context,
     private val listener: OnPlayListClickListener

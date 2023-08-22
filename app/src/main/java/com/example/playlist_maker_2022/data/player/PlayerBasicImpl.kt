@@ -5,7 +5,6 @@ import com.example.playlist_maker_2022.domain.player.api.PlayerBasic
 
 class PlayerBasicImpl(private val mediaPlayer: MediaPlayer, private val url: String?): PlayerBasic {
 
-    //todo: посадить на корутины + музон отрубать при сворачивании или звонке
     private var isPrepared = false
 
     override fun preparePlayer() {

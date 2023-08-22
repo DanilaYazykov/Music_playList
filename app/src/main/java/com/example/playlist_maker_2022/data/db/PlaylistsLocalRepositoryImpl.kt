@@ -28,6 +28,33 @@ class PlaylistsLocalRepositoryImpl(
     private val tracksInPlaylistConverter: TracksInPlaylistConverter,
     private val context: Context
 ) : PlaylistsLocalRepository {
+    override suspend fun getTracksFromPlaylist(playlists: List<String>): Flow<List<Track>> = flow {
+        val tracksInPlaylist: List<String> = playlists
+        val result: MutableList<Track> = mutableListOf()
+        for (trackId in tracksInPlaylist) {
+            val trackEntities = appDatabase.getPlaylistDao().getTracksInPlaylist(trackId)
+            for (i in trackEntities) {
+                result.add(tracksInPlaylistConverter.map(i))
+            }
+        }
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun getAllPlaylists(): Flow<List<Playlists>> = flow {
+        val playlists = appDatabase.getPlaylistDao().getAllPlaylists()
+        emit(convertFromPlaylistsEntityToPlaylists(playlists))
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun getAllTracks(): Flow<List<Track>> = flow {
+        val tracks = appDatabase.getPlaylistDao().getAllTracks()
+        val result = tracks.map { tracksInPlaylistConverter.map(it) }
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun deleteTrack(trackId: String) {
+        appDatabase.getPlaylistDao().deleteTrack(trackId)
+    }
+
     override suspend fun insertPlaylist(playlist: Playlists) {
         appDatabase.getPlaylistDao().insertPlaylist(playlistsDbConverter.map(playlist))
     }

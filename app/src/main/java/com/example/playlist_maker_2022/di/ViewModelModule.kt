@@ -1,11 +1,13 @@
 package com.example.playlist_maker_2022.di
 
-import com.example.playlist_maker_2022.presentation.presenters.media.createNewPlaylist.NewPlaylistViewModel
-import com.example.playlist_maker_2022.presentation.presenters.media.favouritesSongs.FavouriteSongFragmentViewModel
-import com.example.playlist_maker_2022.presentation.presenters.media.playLists.PlaylistMediaFragmentViewModel
-import com.example.playlist_maker_2022.presentation.presenters.player.PlayerViewModel
-import com.example.playlist_maker_2022.presentation.presenters.searching.SearchViewModel
-import com.example.playlist_maker_2022.presentation.presenters.settings.SettingsViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.openedPlaylist.OpenedPlaylistViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.refactorPlaylist.RefactorPlaylistViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.media.createNewPlaylist.NewPlaylistViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.media.favouritesSongs.FavouriteSongFragmentViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.media.playLists.PlaylistMediaFragmentViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.player.PlayerViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.searching.SearchViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.settings.SettingsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -60,6 +62,22 @@ val newPlaylistViewModel = module {
     viewModel<NewPlaylistViewModel> {
         NewPlaylistViewModel(
             playlistsLocalInteractor = get()
+        )
+    }
+}
+
+val openedPlaylistViewModel = module {
+    viewModel<OpenedPlaylistViewModel> {
+        OpenedPlaylistViewModel(
+            playListLocalInteractor = get()
+        )
+    }
+}
+
+val refactorPlaylistViewModel = module {
+    viewModel<RefactorPlaylistViewModel> {
+        RefactorPlaylistViewModel(
+            playListLocalInteractor = get()
         )
     }
 }

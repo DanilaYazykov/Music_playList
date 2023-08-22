@@ -1,6 +1,6 @@
 package com.example.playlist_maker_2022.domain.models
 
-import com.example.playlist_maker_2022.presentation.presenters.player.PlayStatus
+import com.example.playlist_maker_2022.presentation.viewModels.player.PlayStatus
 
 data class PlayerState(
     val playStatus: PlayStatus,

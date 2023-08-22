@@ -8,6 +8,14 @@ import java.io.File
 
 interface PlaylistsLocalRepository {
 
+    suspend fun getTracksFromPlaylist(playlists: List<String>) : Flow<List<Track>>
+
+    suspend fun getAllPlaylists() : Flow<List<Playlists>>
+
+    suspend fun getAllTracks() : Flow<List<Track>>
+
+    suspend fun deleteTrack(trackId: String)
+
     suspend fun insertPlaylist(playlist: Playlists)
 
     suspend fun insertTracksInPlaylist(track: Track)

@@ -37,7 +37,7 @@ class PlaylistsLocalRepositoryImpl(
                 result.add(tracksInPlaylistConverter.map(i))
             }
         }
-        emit(result)
+        emit(result.reversed())
     }.flowOn(Dispatchers.IO)
 
     override suspend fun getAllPlaylists(): Flow<List<Playlists>> = flow {
@@ -75,6 +75,31 @@ class PlaylistsLocalRepositoryImpl(
 
     override suspend fun deletePlaylist(playlist: Playlists) {
         appDatabase.getPlaylistDao().deletePlaylist(playlistsDbConverter.map(playlist))
+    }
+
+    override suspend fun clearTracksFromPlaylist() {
+        var playlists: List<Playlists> = emptyList()
+        var tracks: List<Track> = emptyList()
+
+        getPlaylists().collect {
+            playlists = it
+        }
+        getAllTracks().collect {
+            tracks = it
+        }
+
+        for (track in tracks) {
+            var isTrackInPlaylist = false
+            for (playlist in playlists) {
+                if (playlist.playlistTracks.contains(track.trackId)) {
+                    isTrackInPlaylist = true
+                    break
+                }
+            }
+            if (!isTrackInPlaylist) {
+                deleteTrack(track.trackId)
+            }
+        }
     }
 
     override suspend fun saveImageToPrivateStorage(uri: Uri): Flow<Pair<File, Uri>> {

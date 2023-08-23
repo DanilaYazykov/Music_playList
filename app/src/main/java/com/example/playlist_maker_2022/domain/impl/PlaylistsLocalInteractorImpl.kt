@@ -46,28 +46,7 @@ class PlaylistsLocalInteractorImpl(
     }
 
     private suspend fun clearTracksFromPlaylist() {
-        var playlists: List<Playlists> = emptyList()
-        var tracks: List<Track> = emptyList()
-
-        getPlaylists().collect {
-            playlists = it
-        }
-        getAllTracksInPlaylists().collect {
-            tracks = it
-        }
-
-        for (track in tracks) {
-            var isTrackInPlaylist = false
-            for (playlist in playlists) {
-                if (playlist.playlistTracks.contains(track.trackId)) {
-                    isTrackInPlaylist = true
-                    break
-                }
-            }
-            if (!isTrackInPlaylist) {
-                deleteTrack(track.trackId)
-            }
-        }
+        playlistsLocalRepository.clearTracksFromPlaylist()
     }
 
     override suspend fun deletePlaylist(playlist: Playlists) {

@@ -26,5 +26,7 @@ interface PlaylistsLocalRepository {
 
     suspend fun deletePlaylist(playlist: Playlists)
 
+    suspend fun clearTracksFromPlaylist()
+
     suspend fun saveImageToPrivateStorage(uri: Uri) : Flow<Pair<File, Uri>>
 }

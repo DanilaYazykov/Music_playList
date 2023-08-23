@@ -6,7 +6,7 @@ import com.example.playlist_maker_2022.data.db.dao.PlaylistDao
 import com.example.playlist_maker_2022.data.db.dao.TrackDao
 
 @Database(
-    version = 20,
+    version = 21,
     entities = [
         TrackEntity::class,
         PlaylistEntity::class,

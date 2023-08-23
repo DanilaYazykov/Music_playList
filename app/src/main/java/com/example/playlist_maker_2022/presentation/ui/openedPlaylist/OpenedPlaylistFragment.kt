@@ -67,7 +67,10 @@ class OpenedPlaylistFragment : BindingFragment<FragmentOpenedPlaylistBinding>(),
                         showSnack(true)
                         drawScreen(state.playlists, emptyList())
                     }
-                    is UpdatedScreenState.EmptyShare -> showSnack(false)
+                    is UpdatedScreenState.EmptyShare -> {
+                        showSnack(false)
+                        dotsSheet?.state = BottomSheetBehavior.STATE_HIDDEN
+                    }
                     is UpdatedScreenState.SharedPlaylist -> showApps(state.playlists, state.tracks)
                     is UpdatedScreenState.OptionsMenu -> showBottomSheetDots(state.playlists)
                 }

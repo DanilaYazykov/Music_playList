@@ -5,6 +5,7 @@
     android:id="@+id/openedPlaylistFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/trackDay"
     tools:context=".presentation.ui.openedPlaylist.OpenedPlaylistFragment">
 
     <androidx.constraintlayout.widget.Barrier
@@ -32,6 +33,7 @@
         android:id="@+id/image"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/trackDay"
         app:layout_constraintBottom_toTopOf="@id/barrier"
         app:layout_constraintDimensionRatio="w,1.2:1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,8 +60,9 @@
         style="@style/text_player"
         android:fontFamily="@font/ys_display_medium"
         android:layout_marginTop="@dimen/normal_size"
-        android:textColor="?attr/colorOnSecondary"
+        android:textColor="@color/black"
         android:textSize="24sp"
+        android:background="@color/trackDay"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/year"
         app:layout_constraintEnd_toEndOf="@id/right_guideline_16"
@@ -74,7 +77,8 @@
         style="@style/text_player"
         android:layout_marginTop="0dp"
         android:fontFamily="@font/ys_display_regular"
-        android:textColor="?attr/colorOnSecondary"
+        android:textColor="@color/black"
+        android:background="@color/trackDay"
         android:textSize="18sp"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@id/layout"
@@ -87,6 +91,8 @@
         android:id="@+id/layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:background="@color/trackDay"
         app:layout_constraintTop_toBottomOf="@id/year"
         app:layout_constraintBottom_toTopOf="@id/dots"
         app:layout_constraintEnd_toEndOf="@id/right_guideline_16"
@@ -95,7 +101,8 @@
             android:id="@+id/time"
             style="@style/text_for_recycler"
             android:fontFamily="@font/ys_display_regular"
-            android:textColor="?attr/colorOnSecondary"
+            android:textColor="@color/black"
+            android:background="@color/trackDay"
             android:textSize="18sp"
             tools:text="300 минут" />
         <ImageView
@@ -105,12 +112,15 @@
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:contentDescription="@string/empty"
+            app:tint="@color/black"
+            android:background="@color/trackDay"
             android:src="@drawable/circle"/>
         <TextView
             android:id="@+id/track_count"
             style="@style/text_for_recycler"
             android:fontFamily="@font/ys_display_regular"
-            android:textColor="?attr/colorOnSecondary"
+            android:textColor="@color/black"
+            android:background="@color/trackDay"
             android:textSize="18sp"
             android:ellipsize="middle"
             tools:text="98 треков"/>
@@ -123,7 +133,7 @@
         android:background="@null"
         android:contentDescription="@string/share_app"
         android:src="@drawable/ic_share_pic"
-        app:tint="?attr/colorOnSecondary"
+        app:tint="@color/black"
         app:layout_constraintBottom_toBottomOf="@id/dots"
         app:layout_constraintEnd_toStartOf="@id/dots"
         app:layout_constraintStart_toStartOf="@id/left_guideline_16"
@@ -138,7 +148,7 @@
         android:background="@null"
         android:contentDescription="@string/play"
         android:src="@drawable/fragment_dots"
-        app:tint="?attr/colorOnSecondary"
+        app:tint="@color/black"
         app:layout_constraintStart_toEndOf="@id/share"
         app:layout_constraintTop_toBottomOf="@id/layout" />
 
@@ -146,6 +156,7 @@
         android:id="@+id/coordinator"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/trackDay"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

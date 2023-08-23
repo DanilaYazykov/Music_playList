@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlist_maker_2022.domain.db.PlaylistsLocalInteractor
 import com.example.playlist_maker_2022.domain.models.Playlists
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -20,7 +21,7 @@ open class NewPlaylistViewModel(private val playlistsLocalInteractor: PlaylistsL
     val stateLiveData = _stateLiveData
 
     open fun insertPlaylist() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val playlist = createPlaylist()
             playlistsLocalInteractor.insertPlaylist(playlist)
         }

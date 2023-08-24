@@ -2,7 +2,7 @@ package com.example.playlist_maker_2022.presentation.ui.searching
 
 import android.text.Editable
 import android.text.TextWatcher
-import com.example.playlist_maker_2022.presentation.presenters.searching.SearchViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.searching.SearchViewModel
 
 class SearchingTextWatcher(
     private val searchingFragment: SearchingFragment,

@@ -19,10 +19,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.databinding.FragmentPlayerBinding
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import com.example.playlist_maker_2022.domain.models.Track
-import com.example.playlist_maker_2022.presentation.presenters.player.PlayStatus
-import com.example.playlist_maker_2022.presentation.presenters.player.PlayerViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.player.PlayStatus
+import com.example.playlist_maker_2022.presentation.viewModels.player.PlayerViewModel
 import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.delay
@@ -209,7 +209,7 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>(), OnPlayListClick
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
-    private fun showToastSuccessOrNot(result: Boolean, playlists: Playlists) {
+    private fun showToastSuccessOrNot(result: Boolean, playlists: Playlist) {
         val message = if (result) {
             "Трек уже добавлен в плейлист " + " \"" + playlists.playlistName + "\" "
         } else {
@@ -224,7 +224,7 @@ class PlayerFragment : BindingFragment<FragmentPlayerBinding>(), OnPlayListClick
         playerViewModel.onCleared()
     }
 
-    override fun onPlaylistClick(playlists: Playlists) {
+    override fun onPlaylistClick(playlists: Playlist) {
         playerViewModel.checkPlaylistsAndInsert(playlists, track!!)
         viewLifecycleOwner.lifecycleScope.launch {
             delay(300)

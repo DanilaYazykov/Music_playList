@@ -10,7 +10,7 @@ import androidx.core.net.toUri
 import com.example.playlist_maker_2022.data.db.converters.PlaylistsDbConverter
 import com.example.playlist_maker_2022.data.db.converters.TracksInPlaylistConverter
 import com.example.playlist_maker_2022.domain.db.PlaylistsLocalRepository
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import com.example.playlist_maker_2022.domain.models.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +28,34 @@ class PlaylistsLocalRepositoryImpl(
     private val tracksInPlaylistConverter: TracksInPlaylistConverter,
     private val context: Context
 ) : PlaylistsLocalRepository {
-    override suspend fun insertPlaylist(playlist: Playlists) {
+    override suspend fun getTracksFromPlaylist(playlists: List<String>): Flow<List<Track>> = flow {
+        val tracksInPlaylist: List<String> = playlists
+        val result: MutableList<Track> = mutableListOf()
+        for (trackId in tracksInPlaylist) {
+            val trackEntities = appDatabase.getPlaylistDao().getTracksInPlaylist(trackId)
+            for (i in trackEntities) {
+                result.add(tracksInPlaylistConverter.map(i))
+            }
+        }
+        emit(result.reversed())
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun getAllPlaylists(): Flow<List<Playlist>> = flow {
+        val playlists = appDatabase.getPlaylistDao().getAllPlaylists()
+        emit(convertFromPlaylistsEntityToPlaylists(playlists))
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun getAllTracks(): Flow<List<Track>> = flow {
+        val tracks = appDatabase.getPlaylistDao().getAllTracks()
+        val result = tracks.map { tracksInPlaylistConverter.map(it) }
+        emit(result)
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun deleteTrack(trackId: String) {
+        appDatabase.getPlaylistDao().deleteTrack(trackId)
+    }
+
+    override suspend fun insertPlaylist(playlist: Playlist) {
         appDatabase.getPlaylistDao().insertPlaylist(playlistsDbConverter.map(playlist))
     }
 
@@ -37,17 +64,42 @@ class PlaylistsLocalRepositoryImpl(
         appDatabase.getPlaylistDao().insertTracksInPlaylist(result)
     }
 
-    override suspend fun updatePlaylist(playlist: Playlists) {
+    override suspend fun updatePlaylist(playlist: Playlist) {
         appDatabase.getPlaylistDao().updatePlaylist(playlist = playlistsDbConverter.map(playlist))
     }
 
-    override suspend fun getPlaylists(): Flow<List<Playlists>> = flow {
+    override suspend fun getPlaylists(): Flow<List<Playlist>> = flow {
         val playlists = appDatabase.getPlaylistDao().getPlaylists()
         emit(convertFromPlaylistsEntityToPlaylists(playlists))
     }
 
-    override suspend fun deletePlaylist(playlist: Playlists) {
+    override suspend fun deletePlaylist(playlist: Playlist) {
         appDatabase.getPlaylistDao().deletePlaylist(playlistsDbConverter.map(playlist))
+    }
+
+    override suspend fun clearTracksFromPlaylist() {
+        var playlists: List<Playlist> = emptyList()
+        var tracks: List<Track> = emptyList()
+
+        getPlaylists().collect {
+            playlists = it
+        }
+        getAllTracks().collect {
+            tracks = it
+        }
+
+        for (track in tracks) {
+            var isTrackInPlaylist = false
+            for (playlist in playlists) {
+                if (playlist.playlistTracks.contains(track.trackId)) {
+                    isTrackInPlaylist = true
+                    break
+                }
+            }
+            if (!isTrackInPlaylist) {
+                deleteTrack(track.trackId)
+            }
+        }
     }
 
     override suspend fun saveImageToPrivateStorage(uri: Uri): Flow<Pair<File, Uri>> {
@@ -78,7 +130,7 @@ class PlaylistsLocalRepositoryImpl(
         }.flowOn(Dispatchers.IO)
     }
 
-    private fun convertFromPlaylistsEntityToPlaylists(playlistsEntity: List<PlaylistEntity>): List<Playlists> {
+    private fun convertFromPlaylistsEntityToPlaylists(playlistsEntity: List<PlaylistEntity>): List<Playlist> {
         return playlistsEntity.map { playlistEntity -> playlistsDbConverter.map(playlistEntity) }
     }
 

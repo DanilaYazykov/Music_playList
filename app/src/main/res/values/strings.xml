@@ -42,6 +42,7 @@
     <string name="EditTextTitleNewPlaylist">Название*</string>
     <string name="EditTextDescriptionNewPlaylist">Описание</string>
     <string name="EditTextCreateNewPlaylist">Создать</string>
+    <string name="save">Сохранить</string>
     <string name="TextViewNewPlaylist">Новый плейлист</string>
     <string name="dialogTitle">Запрос разрешения</string>
     <string name="askGivePermission">Разрешение на доcтуп к файлам необходим для установки картинки плейлиста. Вы можете предоставить разрешение в настройках приложения. Предоставить разрешение?</string>
@@ -60,6 +61,13 @@
     <string name="correct_information">Редактировать информацию</string>
     <string name="share">Поделиться</string>
     <string name="delete_playlist">Удалить плейлист</string>
+    <string name="question_delete_track">Хотите удалить трек?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="no_tracks_in_playlist">В плейлисте нет треков</string>
+    <string name="nothing_to_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="remove_playlist">Хотите удалить плейлист?</string>
+    <string name="refactor">Редактировать</string>
 
     <plurals name="minutes">
         <item quantity="zero">%1$d минут</item>
@@ -70,7 +78,7 @@
         <item quantity="other">%1$d минут</item>
     </plurals>
 
-    <plurals name="track_count" >
+    <plurals name="track_count">
         <item quantity="zero">%1$d треков</item>
         <item quantity="one">%1$d трек</item>
         <item quantity="two">%1$d трека</item>

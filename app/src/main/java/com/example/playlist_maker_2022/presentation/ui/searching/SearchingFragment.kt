@@ -16,7 +16,7 @@ import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.data.network.NetworkResult
 import com.example.playlist_maker_2022.databinding.FragmentSearchingBinding
 import com.example.playlist_maker_2022.domain.models.Track
-import com.example.playlist_maker_2022.presentation.presenters.searching.SearchViewModel
+import com.example.playlist_maker_2022.presentation.viewModels.searching.SearchViewModel
 import com.example.playlist_maker_2022.presentation.ui.player.PlayerFragment
 import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
 import com.example.playlist_maker_2022.presentation.util.internetDialogUtil.NoInternetDialogManager

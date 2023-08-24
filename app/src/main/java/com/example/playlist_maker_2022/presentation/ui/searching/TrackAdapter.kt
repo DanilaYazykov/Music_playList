@@ -10,6 +10,8 @@ import com.example.playlist_maker_2022.domain.models.Track
 class TrackAdapter(internal var trackList: List<Track>, private val listener: OnTrackClickListener) :
     RecyclerView.Adapter<TrackHolder>() {
 
+    internal var actionLong: ((Track) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.track, parent, false)
         return TrackHolder(itemView)
@@ -21,6 +23,9 @@ class TrackAdapter(internal var trackList: List<Track>, private val listener: On
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
             listener.onTrackClick(track)
+        }
+        if (actionLong != null) {
+            holder.itemView.setOnLongClickListener { actionLong!!.invoke(track); true }
         }
     }
 

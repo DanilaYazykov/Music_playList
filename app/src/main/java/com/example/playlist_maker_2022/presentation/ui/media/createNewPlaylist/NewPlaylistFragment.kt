@@ -25,7 +25,9 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.databinding.FragmentNewPlaylistBinding
-import com.example.playlist_maker_2022.presentation.presenters.media.createNewPlaylist.NewPlaylistViewModel
+import com.example.playlist_maker_2022.domain.models.Playlist
+import com.example.playlist_maker_2022.presentation.viewModels.media.createNewPlaylist.NewPlaylistViewModel
+import com.example.playlist_maker_2022.presentation.ui.player.PlayerFragment
 import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
@@ -35,13 +37,14 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
-class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
+open class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
 
-    private val viewModel by viewModel<NewPlaylistViewModel>()
+    protected open val viewModel by viewModel<NewPlaylistViewModel>()
+    protected open val playlists by lazy { getParcelable() }
 
-    private val requester = PermissionRequester.instance()
-    private var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>? = null
-    private var textTitle = ""
+    protected open val requester = PermissionRequester.instance()
+    protected open var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>? = null
+    protected open var textTitle = ""
     private var playlistImage: File? = null
     private var textDescription = ""
     private var uriLink: Uri = Uri.EMPTY
@@ -66,6 +69,20 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
+    private fun getParcelable(): Playlist? {
+        val args = arguments
+        var todoItem: Playlist? = null
+        if (args != null) {
+            todoItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                args.getParcelable(PlayerFragment.TRACK_KEY, Playlist::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                args.getParcelable(PlayerFragment.TRACK_KEY)
+            }
+        }
+        return todoItem
+    }
+
     private fun workingWithText() {
         binding.playlistName.doOnTextChanged { text, _, _, _ ->
             if (text?.length!! > 0) {
@@ -73,13 +90,10 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
                 textTitle = text.toString()
                 viewModel.setPlaylistName(textTitle)
                 binding.buttonCreate.setBackgroundResource(R.drawable.bt_round_drawable_blue)
-                binding.buttonCreate.setOnClickListener {
-                    showSuccessToast()
-                    viewModel.insertPlaylist()
-                    findNavController().navigateUp()
-                }
+                createButtonBehavior()
             } else {
                 textTitle = ""
+                binding.buttonCreate.setOnClickListener(null)
                 viewModel.setPlaylistName(textTitle)
                 renderBoxStrokeEditTextColor(binding.tvName, text)
                 binding.buttonCreate.setBackgroundResource(R.drawable.bt_round_drawable)
@@ -99,7 +113,15 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
         }
     }
 
-    private fun getImageUri() {
+    open fun createButtonBehavior() {
+        binding.buttonCreate.setOnClickListener {
+            showSuccessToast()
+            viewModel.insertPlaylist()
+            findNavController().navigateUp()
+        }
+    }
+
+    open fun getImageUri() {
         pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 Glide.with(this)
@@ -115,7 +137,7 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
         }
     }
 
-    private fun requestPermissionAndPickImage() {
+    fun requestPermissionAndPickImage() {
         lifecycleScope.launch {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 requester.request(Manifest.permission.READ_MEDIA_IMAGES).collect { result ->
@@ -190,7 +212,7 @@ class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
         viewModel.saveImageToPrivateStorage(uri)
     }
 
-    private fun exitBehavior() {
+    open fun exitBehavior() {
         if (textTitle.isNotEmpty()
             || textDescription.isNotEmpty() || uriLink != Uri.EMPTY) showFrameDialogDeleteOrCancel()
         else findNavController().navigateUp()

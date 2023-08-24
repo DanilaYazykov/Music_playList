@@ -44,7 +44,7 @@ open class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
 
     protected open val requester = PermissionRequester.instance()
     protected open var pickMedia: ActivityResultLauncher<PickVisualMediaRequest>? = null
-    private var textTitle = ""
+    protected open var textTitle = ""
     private var playlistImage: File? = null
     private var textDescription = ""
     private var uriLink: Uri = Uri.EMPTY

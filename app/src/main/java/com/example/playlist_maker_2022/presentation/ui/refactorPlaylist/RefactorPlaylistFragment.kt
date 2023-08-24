@@ -2,6 +2,7 @@ package com.example.playlist_maker_2022.presentation.ui.refactorPlaylist
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -41,7 +42,18 @@ class RefactorPlaylistFragment : NewPlaylistFragment() {
     override fun createButtonBehavior() {
         super.createButtonBehavior()
         binding.playlistName.doOnTextChanged { text, _, _, _ ->
-            if (text?.length!! > 0) {
+            if (text?.length!! > 0 || textTitle.isNotEmpty()) {
+                binding.buttonCreate.setOnClickListener {
+                    viewModel.updatePlaylist(playlists!!)
+                    findNavController().navigateUp()
+                    textTitle = text.toString()
+                }
+            } else {
+                binding.buttonCreate.setOnClickListener(null)
+            }
+        }
+        binding.playlistName.doAfterTextChanged {
+            if (binding.playlistName.text?.length!! > 0) {
                 binding.buttonCreate.setOnClickListener {
                     viewModel.updatePlaylist(playlists!!)
                     findNavController().navigateUp()

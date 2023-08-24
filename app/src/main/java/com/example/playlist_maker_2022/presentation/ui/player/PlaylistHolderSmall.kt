@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlist_maker_2022.R
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import java.util.Locale
 
 class PlaylistHolderSmall(itemView: View, val context: Context) : RecyclerView.ViewHolder(itemView) {
@@ -22,7 +22,7 @@ class PlaylistHolderSmall(itemView: View, val context: Context) : RecyclerView.V
     private val imagePlaylist: ImageView = itemView.findViewById(R.id.iv_album_cover_small)
 
     @RequiresApi(Build.VERSION_CODES.N)
-    fun bind(playlist: Playlists) {
+    fun bind(playlist: Playlist) {
         nameOfPlaylist?.text = playlist.playlistName
         countOfTracks?.text = mapper(playlist.playlistTracksCount)
 

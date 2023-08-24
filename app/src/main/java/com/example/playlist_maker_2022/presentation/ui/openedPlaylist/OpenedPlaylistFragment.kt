@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.databinding.FragmentOpenedPlaylistBinding
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.presentation.viewModels.openedPlaylist.OpenedPlaylistViewModel
 import com.example.playlist_maker_2022.presentation.viewModels.openedPlaylist.UpdatedScreenState
@@ -33,7 +33,7 @@ import java.util.Locale
 
 class OpenedPlaylistFragment : BindingFragment<FragmentOpenedPlaylistBinding>(), OnTrackClickListener {
 
-    private val playlists: Playlists? by lazy { getParcelable() }
+    private val playlists: Playlist? by lazy { getParcelable() }
     private val viewModel by viewModel <OpenedPlaylistViewModel>()
 
     private var dotsSheet: BottomSheetBehavior<ConstraintLayout>? = null
@@ -95,7 +95,7 @@ class OpenedPlaylistFragment : BindingFragment<FragmentOpenedPlaylistBinding>(),
         trackSheet?.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
-    private fun drawScreen(playlists: Playlists, tracks: List<Track>) {
+    private fun drawScreen(playlists: Playlist, tracks: List<Track>) {
         dotsSheet?.state = BottomSheetBehavior.STATE_HIDDEN
         Glide.with(requireActivity())
             .load(playlists.playlistImage)
@@ -114,7 +114,7 @@ class OpenedPlaylistFragment : BindingFragment<FragmentOpenedPlaylistBinding>(),
         }
     }
 
-    private fun showApps(playlists: Playlists, tracks: List<Track>) {
+    private fun showApps(playlists: Playlist, tracks: List<Track>) {
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             putExtra(Intent.EXTRA_TEXT, convertAlbumToString(playlists, tracks))
             type = "text/plain"
@@ -123,7 +123,7 @@ class OpenedPlaylistFragment : BindingFragment<FragmentOpenedPlaylistBinding>(),
         activity?.startActivity(chooserIntent)
     }
 
-    private fun convertAlbumToString(playlists: Playlists, tracks: List<Track>): String {
+    private fun convertAlbumToString(playlists: Playlist, tracks: List<Track>): String {
         val sb = StringBuilder()
         sb.append("${playlists.playlistName}\n")
         sb.append("${playlists.playlistDescription}\n")
@@ -142,12 +142,12 @@ class OpenedPlaylistFragment : BindingFragment<FragmentOpenedPlaylistBinding>(),
         return sb.toString()
     }
 
-    private fun getParcelable(): Playlists? {
+    private fun getParcelable(): Playlist? {
         val args = arguments
-        var todoItem: Playlists? = null
+        var todoItem: Playlist? = null
         if (args != null) {
             todoItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                args.getParcelable(PlayerFragment.TRACK_KEY, Playlists::class.java)
+                args.getParcelable(PlayerFragment.TRACK_KEY, Playlist::class.java)
             } else {
                 @Suppress("DEPRECATION")
                 args.getParcelable(PlayerFragment.TRACK_KEY)
@@ -185,7 +185,7 @@ class OpenedPlaylistFragment : BindingFragment<FragmentOpenedPlaylistBinding>(),
         exitFromPlaylist()
     }
 
-    private fun showBottomSheetDots(playlists: Playlists) {
+    private fun showBottomSheetDots(playlists: Playlist) {
         with(binding.bottomSheetDots) {
             item.tvNameOfSongSmall.text = playlists.playlistName
             item.tvNameOfGroupSmall.text = playlists.playlistTracksCount.toString()
@@ -239,7 +239,7 @@ class OpenedPlaylistFragment : BindingFragment<FragmentOpenedPlaylistBinding>(),
 
     companion object {
         private const val TRACK_KEY = "trackKey"
-        fun createArgs(playlists: Playlists): Bundle =
+        fun createArgs(playlists: Playlist): Bundle =
             bundleOf(TRACK_KEY to playlists)
     }
 }

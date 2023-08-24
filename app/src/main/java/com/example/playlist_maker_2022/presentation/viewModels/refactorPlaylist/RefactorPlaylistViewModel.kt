@@ -3,7 +3,7 @@ package com.example.playlist_maker_2022.presentation.viewModels.refactorPlaylist
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.example.playlist_maker_2022.domain.db.PlaylistsLocalInteractor
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import com.example.playlist_maker_2022.presentation.viewModels.media.createNewPlaylist.NewPlaylistViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,14 +18,14 @@ class RefactorPlaylistViewModel(
         playlistId = text
     }
 
-    fun updatePlaylist(playlists: Playlists) {
+    fun updatePlaylist(playlists: Playlist) {
         if (uriLink != Uri.EMPTY) {
             playlists.playlistImage = uriLink.toString()
         }
         playlists.playlistName = textTitle
         playlists.playlistDescription = textDescription
         viewModelScope.launch(Dispatchers.IO) {
-            val result =  Playlists(
+            val result =  Playlist(
                 playlistId = playlistId,
                 playlistName = textTitle,
                 playlistDescription = textDescription,

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlist_maker_2022.presentation.ui.openedPlaylist.OpenedPlaylistFragment
 import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.databinding.FragmentMediaPlaylistBinding
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import com.example.playlist_maker_2022.presentation.viewModels.media.playLists.PlaylistMediaFragmentViewModel
 import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -51,7 +51,7 @@ class PlaylistMediaFragment : BindingFragment<FragmentMediaPlaylistBinding>(), O
         }
     }
 
-    override fun onPlaylistClick(playlists: Playlists) {
+    override fun onPlaylistClick(playlists: Playlist) {
         findNavController().navigate(R.id.action_mediaFragment_to_openedPlaylistFragment,
             OpenedPlaylistFragment.createArgs(playlists))
     }

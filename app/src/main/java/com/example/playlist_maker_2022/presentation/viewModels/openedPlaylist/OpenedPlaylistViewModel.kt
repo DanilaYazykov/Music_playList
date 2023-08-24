@@ -3,7 +3,7 @@ package com.example.playlist_maker_2022.presentation.viewModels.openedPlaylist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlist_maker_2022.domain.db.PlaylistsLocalInteractor
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import com.example.playlist_maker_2022.domain.models.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +20,7 @@ class OpenedPlaylistViewModel(
     private val uiStateMutable = MutableStateFlow<UpdatedScreenState>(UpdatedScreenState.Default)
     val uiState: StateFlow<UpdatedScreenState> = uiStateMutable.asStateFlow()
 
-    fun getTracksFromPlaylist(playlists: Playlists) {
+    fun getTracksFromPlaylist(playlists: Playlist) {
         viewModelScope.launch {
             playListLocalInteractor.getTracksFromPlaylist(playlists.playlistTracks).collect {
                 if (playlists.playlistTracksCount == 0) {
@@ -34,20 +34,20 @@ class OpenedPlaylistViewModel(
         }
     }
 
-    fun deleteTrack(trackId: String, playlists: Playlists) {
+    fun deleteTrack(trackId: String, playlists: Playlist) {
         viewModelScope.launch(Dispatchers.IO) {
             playListLocalInteractor.removeTrackFromPlaylist(trackId = trackId, playlist = playlists)
             getTracksFromPlaylist(playlists)
         }
     }
 
-    fun deletePlaylist(playlists: Playlists) {
+    fun deletePlaylist(playlists: Playlist) {
         viewModelScope.launch(Dispatchers.IO) {
             playListLocalInteractor.deletePlaylist(playlists)
         }
     }
 
-    fun onSharePressed(playlists: Playlists) {
+    fun onSharePressed(playlists: Playlist) {
         viewModelScope.launch(Dispatchers.IO) {
                 if (playlists.playlistTracksCount == 0) {
                     uiStateMutable.emit(UpdatedScreenState.EmptyShare)
@@ -58,7 +58,7 @@ class OpenedPlaylistViewModel(
     }
 
 
-    fun onDotsPressed(playlists: Playlists) {
+    fun onDotsPressed(playlists: Playlist) {
         viewModelScope.launch(Dispatchers.IO) {
             uiStateMutable.emit(UpdatedScreenState.Default)
             playListLocalInteractor.getTracksFromPlaylist(playlists.playlistTracks).collect {

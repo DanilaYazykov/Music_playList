@@ -3,7 +3,7 @@ package com.example.playlist_maker_2022.domain.impl
 import android.net.Uri
 import com.example.playlist_maker_2022.domain.db.PlaylistsLocalInteractor
 import com.example.playlist_maker_2022.domain.db.PlaylistsLocalRepository
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import com.example.playlist_maker_2022.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 import java.io.File
@@ -15,7 +15,7 @@ class PlaylistsLocalInteractorImpl(
         return playlistsLocalRepository.getTracksFromPlaylist(playlists)
     }
 
-    override suspend fun removeTrackFromPlaylist(playlist: Playlists, trackId: String) {
+    override suspend fun removeTrackFromPlaylist(playlist: Playlist, trackId: String) {
         playlist.playlistTracks = playlist.playlistTracks - trackId
         playlist.playlistTracksCount = playlist.playlistTracks.size
         playlistsLocalRepository.updatePlaylist(playlist)
@@ -30,18 +30,18 @@ class PlaylistsLocalInteractorImpl(
         playlistsLocalRepository.deleteTrack(trackId)
     }
 
-    override suspend fun insertPlaylist(playlist: Playlists) {
+    override suspend fun insertPlaylist(playlist: Playlist) {
         playlistsLocalRepository.insertPlaylist(playlist)
     }
 
-    override suspend fun updatePlaylist(playlist: Playlists, track: Track) {
+    override suspend fun updatePlaylist(playlist: Playlist, track: Track) {
         playlist.playlistTracks = playlist.playlistTracks + track.trackId
         playlist.playlistTracksCount = playlist.playlistTracks.size
         playlistsLocalRepository.updatePlaylist(playlist)
         playlistsLocalRepository.insertTracksInPlaylist(track)
     }
 
-    override suspend fun getPlaylists(): Flow<List<Playlists>> {
+    override suspend fun getPlaylists(): Flow<List<Playlist>> {
         return playlistsLocalRepository.getPlaylists()
     }
 
@@ -49,12 +49,12 @@ class PlaylistsLocalInteractorImpl(
         playlistsLocalRepository.clearTracksFromPlaylist()
     }
 
-    override suspend fun deletePlaylist(playlist: Playlists) {
+    override suspend fun deletePlaylist(playlist: Playlist) {
         playlistsLocalRepository.deletePlaylist(playlist)
         clearTracksFromPlaylist()
     }
 
-    override suspend fun checkIfTrackAlreadyExists(playlist: Playlists, track: Track): Boolean {
+    override suspend fun checkIfTrackAlreadyExists(playlist: Playlist, track: Track): Boolean {
         return playlist.playlistTracks.contains(track.trackId)
     }
 

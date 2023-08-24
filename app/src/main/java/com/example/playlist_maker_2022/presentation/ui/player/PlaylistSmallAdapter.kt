@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlist_maker_2022.R
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 
 open class PlaylistAdapterSmall(
-    var playlists: List<Playlists>,
+    var playlists: List<Playlist>,
     val context: Context,
     private val listener: OnPlayListClickListener
     ): RecyclerView.Adapter<PlaylistHolderSmall>() {
@@ -28,5 +28,5 @@ open class PlaylistAdapterSmall(
     }
 }
 interface OnPlayListClickListener {
-    fun onPlaylistClick(playlists: Playlists)
+    fun onPlaylistClick(playlists: Playlist)
 }

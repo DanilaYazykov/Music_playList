@@ -7,12 +7,12 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlist_maker_2022.R
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import com.example.playlist_maker_2022.presentation.viewModels.refactorPlaylist.RefactorPlaylistViewModel
 import com.example.playlist_maker_2022.presentation.ui.media.createNewPlaylist.NewPlaylistFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class RefactorPlaylist : NewPlaylistFragment() {
+class RefactorPlaylistFragment : NewPlaylistFragment() {
 
     override val viewModel by viewModel<RefactorPlaylistViewModel>()
 
@@ -21,7 +21,7 @@ class RefactorPlaylist : NewPlaylistFragment() {
         drawScreen(playlists = playlists!!)
     }
 
-    private fun drawScreen(playlists: Playlists) {
+    private fun drawScreen(playlists: Playlist) {
         binding.apply {
             playlistName.setText(playlists.playlistName)
             playlistDescription.setText(playlists.playlistDescription)

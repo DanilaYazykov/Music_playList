@@ -3,7 +3,7 @@ package com.example.playlist_maker_2022.domain.models
 import android.os.Parcelable
 
 @kotlinx.parcelize.Parcelize
-data class Playlists(
+data class Playlist(
     val playlistId: Int,
     var playlistName: String,
     var playlistDescription: String?,

@@ -10,7 +10,7 @@ import androidx.core.net.toUri
 import com.example.playlist_maker_2022.data.db.converters.PlaylistsDbConverter
 import com.example.playlist_maker_2022.data.db.converters.TracksInPlaylistConverter
 import com.example.playlist_maker_2022.domain.db.PlaylistsLocalRepository
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import com.example.playlist_maker_2022.domain.models.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -40,7 +40,7 @@ class PlaylistsLocalRepositoryImpl(
         emit(result.reversed())
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun getAllPlaylists(): Flow<List<Playlists>> = flow {
+    override suspend fun getAllPlaylists(): Flow<List<Playlist>> = flow {
         val playlists = appDatabase.getPlaylistDao().getAllPlaylists()
         emit(convertFromPlaylistsEntityToPlaylists(playlists))
     }.flowOn(Dispatchers.IO)
@@ -55,7 +55,7 @@ class PlaylistsLocalRepositoryImpl(
         appDatabase.getPlaylistDao().deleteTrack(trackId)
     }
 
-    override suspend fun insertPlaylist(playlist: Playlists) {
+    override suspend fun insertPlaylist(playlist: Playlist) {
         appDatabase.getPlaylistDao().insertPlaylist(playlistsDbConverter.map(playlist))
     }
 
@@ -64,21 +64,21 @@ class PlaylistsLocalRepositoryImpl(
         appDatabase.getPlaylistDao().insertTracksInPlaylist(result)
     }
 
-    override suspend fun updatePlaylist(playlist: Playlists) {
+    override suspend fun updatePlaylist(playlist: Playlist) {
         appDatabase.getPlaylistDao().updatePlaylist(playlist = playlistsDbConverter.map(playlist))
     }
 
-    override suspend fun getPlaylists(): Flow<List<Playlists>> = flow {
+    override suspend fun getPlaylists(): Flow<List<Playlist>> = flow {
         val playlists = appDatabase.getPlaylistDao().getPlaylists()
         emit(convertFromPlaylistsEntityToPlaylists(playlists))
     }
 
-    override suspend fun deletePlaylist(playlist: Playlists) {
+    override suspend fun deletePlaylist(playlist: Playlist) {
         appDatabase.getPlaylistDao().deletePlaylist(playlistsDbConverter.map(playlist))
     }
 
     override suspend fun clearTracksFromPlaylist() {
-        var playlists: List<Playlists> = emptyList()
+        var playlists: List<Playlist> = emptyList()
         var tracks: List<Track> = emptyList()
 
         getPlaylists().collect {
@@ -130,7 +130,7 @@ class PlaylistsLocalRepositoryImpl(
         }.flowOn(Dispatchers.IO)
     }
 
-    private fun convertFromPlaylistsEntityToPlaylists(playlistsEntity: List<PlaylistEntity>): List<Playlists> {
+    private fun convertFromPlaylistsEntityToPlaylists(playlistsEntity: List<PlaylistEntity>): List<Playlist> {
         return playlistsEntity.map { playlistEntity -> playlistsDbConverter.map(playlistEntity) }
     }
 

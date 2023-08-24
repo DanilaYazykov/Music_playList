@@ -1,14 +1,14 @@
 package com.example.playlist_maker_2022.data.db.converters
 
 import com.example.playlist_maker_2022.data.db.PlaylistEntity
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 
 class PlaylistsDbConverter {
 
-    fun map(playlist: PlaylistEntity): Playlists {
-        return Playlists(
+    fun map(playlist: PlaylistEntity): Playlist {
+        return Playlist(
             playlistId = playlist.playlistId,
             playlistName = playlist.playlistName,
             playlistImage = playlist.playlistImage,
@@ -18,7 +18,7 @@ class PlaylistsDbConverter {
         )
     }
 
-    fun map(playlist: Playlists): PlaylistEntity {
+    fun map(playlist: Playlist): PlaylistEntity {
         return PlaylistEntity(
             playlistId = playlist.playlistId,
             playlistName = playlist.playlistName,

@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlist_maker_2022.domain.db.PlaylistsLocalInteractor
 import com.example.playlist_maker_2022.domain.db.TracksLocalInteractor
 import com.example.playlist_maker_2022.domain.models.PlayerState
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import com.example.playlist_maker_2022.domain.models.Track
 import com.example.playlist_maker_2022.domain.searching.api.PlayerInteractor
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +26,7 @@ class PlayerViewModel(
     private val _state = MutableLiveData(PlayerState.Default)
     val playerStateLiveData: LiveData<PlayerState> = _state
     private var updateTimeJob: Job? = null
-    private val _stateLiveData = MutableLiveData<List<Playlists>>()
+    private val _stateLiveData = MutableLiveData<List<Playlist>>()
     val stateLiveData = _stateLiveData
 
     private val _insertOrNotFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -120,13 +120,13 @@ class PlayerViewModel(
         likeControl(track.trackId)
     }
 
-    private fun updatePlaylist(name: Playlists, track: Track) {
+    private fun updatePlaylist(name: Playlist, track: Track) {
         viewModelScope.launch {
             playlistsLocalInteractor.updatePlaylist(name, track)
         }
     }
 
-    fun checkPlaylistsAndInsert(playlistTracks: Playlists, track: Track) {
+    fun checkPlaylistsAndInsert(playlistTracks: Playlist, track: Track) {
         viewModelScope.launch {
             if (playlistsLocalInteractor.checkIfTrackAlreadyExists(playlistTracks, track)) {
                 _insertOrNotFlow.value = true

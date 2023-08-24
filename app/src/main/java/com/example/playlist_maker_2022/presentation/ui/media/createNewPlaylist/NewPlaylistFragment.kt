@@ -25,7 +25,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlist_maker_2022.R
 import com.example.playlist_maker_2022.databinding.FragmentNewPlaylistBinding
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 import com.example.playlist_maker_2022.presentation.viewModels.media.createNewPlaylist.NewPlaylistViewModel
 import com.example.playlist_maker_2022.presentation.ui.player.PlayerFragment
 import com.example.playlist_maker_2022.presentation.util.bindingFragment.BindingFragment
@@ -69,12 +69,12 @@ open class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
-    private fun getParcelable(): Playlists? {
+    private fun getParcelable(): Playlist? {
         val args = arguments
-        var todoItem: Playlists? = null
+        var todoItem: Playlist? = null
         if (args != null) {
             todoItem = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                args.getParcelable(PlayerFragment.TRACK_KEY, Playlists::class.java)
+                args.getParcelable(PlayerFragment.TRACK_KEY, Playlist::class.java)
             } else {
                 @Suppress("DEPRECATION")
                 args.getParcelable(PlayerFragment.TRACK_KEY)
@@ -93,6 +93,7 @@ open class NewPlaylistFragment : BindingFragment<FragmentNewPlaylistBinding>() {
                 createButtonBehavior()
             } else {
                 textTitle = ""
+                binding.buttonCreate.setOnClickListener(null)
                 viewModel.setPlaylistName(textTitle)
                 renderBoxStrokeEditTextColor(binding.tvName, text)
                 binding.buttonCreate.setBackgroundResource(R.drawable.bt_round_drawable)

@@ -14,7 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.target.Target
 import com.example.playlist_maker_2022.R
-import com.example.playlist_maker_2022.domain.models.Playlists
+import com.example.playlist_maker_2022.domain.models.Playlist
 
 class PlaylistHolder(itemView: View, val context: Context) : RecyclerView.ViewHolder(itemView) {
 
@@ -22,7 +22,7 @@ class PlaylistHolder(itemView: View, val context: Context) : RecyclerView.ViewHo
     private val countOfTrack: TextView? = itemView.findViewById(R.id.tracksCount)
     private val image: ImageView = itemView.findViewById(R.id.imageView)
 
-    fun bind(playlist: Playlists) {
+    fun bind(playlist: Playlist) {
         nameOfPlaylist?.text = playlist.playlistName
         countOfTrack?.text = mapper(playlist.playlistTracksCount)
 
